@@ -49,7 +49,7 @@ export interface FlowChange {
     // (undocumented)
     at: Date;
     // (undocumented)
-    by: ServerSession;
+    by: string;
     // (undocumented)
     op: FlowOperation;
 }
@@ -70,7 +70,7 @@ export class FlowSyncServer implements FlowSyncProtocol {
     // (undocumented)
     read(): Promise<FlowSyncSnapshot>;
     // (undocumented)
-    sync(input: FlowSyncInput, user?: Partial<ServerUser>): Promise<FlowSyncOutput | null>;
+    sync(input: FlowSyncInput, user?: string): Promise<FlowSyncOutput | null>;
     // (undocumented)
     trim(): Promise<boolean>;
 }
@@ -94,25 +94,6 @@ export interface ServerLogger {
     log(message: string): void;
     // (undocumented)
     warn(message: string): void;
-}
-
-// @public (undocumented)
-export interface ServerSession extends ServerUser {
-    // (undocumented)
-    key: string;
-}
-
-// Warning: (ae-internal-missing-underscore) The name "ServerSessionType" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal (undocumented)
-export const ServerSessionType: RecordType<ServerSession>;
-
-// @public (undocumented)
-export interface ServerUser {
-    // (undocumented)
-    name: string;
-    // (undocumented)
-    uid: string;
 }
 
 ```

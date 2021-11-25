@@ -28,6 +28,4 @@ Server for collaborative rich text editing
 |  [BlobStore](./scribing-server.blobstore.md) |  |
 |  [BlobWriteResult](./scribing-server.blobwriteresult.md) |  |
 |  [ServerLogger](./scribing-server.serverlogger.md) |  |
-|  [ServerSession](./scribing-server.serversession.md) |  |
-|  [ServerUser](./scribing-server.serveruser.md) |  |
 
