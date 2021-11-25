@@ -8,14 +8,13 @@
 <b>Signature:</b>
 
 ```typescript
-export interface ServerSession 
+export interface ServerSession extends ServerUser 
 ```
+<b>Extends:</b> [ServerUser](./scribing-server.serveruser.md)
 
 ## Properties
 
 |  Property | Type | Description |
 |  --- | --- | --- |
 |  [key](./scribing-server.serversession.key.md) | string |  |
-|  [name](./scribing-server.serversession.name.md) | string |  |
-|  [uid](./scribing-server.serversession.uid.md) | string |  |
 

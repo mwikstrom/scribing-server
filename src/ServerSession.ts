@@ -1,10 +1,14 @@
 import { recordType, RecordType, stringType } from "paratype";
 
 /** @public */
-export interface ServerSession {
-    key: string;
+export interface ServerUser {
     uid: string;
     name: string;
+}
+
+/** @public */
+export interface ServerSession extends ServerUser {
+    key: string;
 }
 
 /** @internal */

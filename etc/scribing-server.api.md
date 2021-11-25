@@ -7,6 +7,7 @@
 import { FlowOperation } from 'scribing';
 import { FlowSyncInput } from 'scribing';
 import { FlowSyncOutput } from 'scribing';
+import { FlowSyncProtocol } from 'scribing';
 import { FlowSyncSnapshot } from 'scribing';
 import { RecordType } from 'paratype';
 import { Type } from 'paratype';
@@ -64,12 +65,12 @@ export const FlowChangeArrayType: Type<FlowChange[]>;
 export const FlowChangeType: RecordType<FlowChange>;
 
 // @public (undocumented)
-export class FlowSyncServer {
+export class FlowSyncServer implements FlowSyncProtocol {
     constructor(blobStore?: BlobStore, logger?: ServerLogger);
     // (undocumented)
     read(): Promise<FlowSyncSnapshot>;
     // (undocumented)
-    sync(input: FlowSyncInput, session: ServerSession): Promise<FlowSyncOutput | null>;
+    sync(input: FlowSyncInput, user?: Partial<ServerUser>): Promise<FlowSyncOutput | null>;
     // (undocumented)
     trim(): Promise<boolean>;
 }
@@ -96,18 +97,22 @@ export interface ServerLogger {
 }
 
 // @public (undocumented)
-export interface ServerSession {
+export interface ServerSession extends ServerUser {
     // (undocumented)
     key: string;
-    // (undocumented)
-    name: string;
-    // (undocumented)
-    uid: string;
 }
 
 // Warning: (ae-internal-missing-underscore) The name "ServerSessionType" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal (undocumented)
 export const ServerSessionType: RecordType<ServerSession>;
+
+// @public (undocumented)
+export interface ServerUser {
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    uid: string;
+}
 
 ```

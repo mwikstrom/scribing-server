@@ -1,8 +1,8 @@
 import { BlobStore } from "./BlobStore";
-import { ServerSession } from "./ServerSession";
+import { ServerSession, ServerUser } from "./ServerSession";
 import { FlowHeadData } from "./internal/FlowHeadData";
 import { ServerLogger } from "./ServerLogger";
-import { FlowOperation, FlowSyncInput, FlowSyncOutput, FlowSyncSnapshot } from "scribing";
+import { FlowOperation, FlowSyncInput, FlowSyncOutput, FlowSyncProtocol, FlowSyncSnapshot } from "scribing";
 import { readHeadBlob, updateHeadBlob } from "./internal/head-blob";
 import { CONFLICT_SYMBOL } from "./internal/merge";
 import { ABORT_SYMBOL } from "./internal/retry";
@@ -12,7 +12,7 @@ import { shouldTrim, getTrimmedHead } from "./internal/trim";
 import { MemoryBlobStore } from "./MemoryBlobStore";
 
 /** @public */
-export class FlowSyncServer {
+export class FlowSyncServer implements FlowSyncProtocol {
     #blobStore: BlobStore;
     #logger: ServerLogger;
     #trimActive = false;
@@ -29,9 +29,9 @@ export class FlowSyncServer {
         return { version, content, theme, presence }; 
     }
     
-    async sync(input: FlowSyncInput, session: ServerSession): Promise<FlowSyncOutput | null> {
+    async sync(input: FlowSyncInput, user?: Partial<ServerUser>): Promise<FlowSyncOutput | null> {
         let merge: FlowOperation | null = null;
-        
+        const session = getSessionInfo(input.key, user);
         const attempt = async (dataBefore: FlowHeadData): Promise<FlowHeadData | typeof ABORT_SYMBOL> => {
             const result = getSyncedHead(input, session, dataBefore);
             if (result === CONFLICT_SYMBOL) {
@@ -55,7 +55,6 @@ export class FlowSyncServer {
             version: dataAfter.version,
             merge,
             presence: dataAfter.presence,
-            you: session.key,
         };
 
         if (shouldTrim(dataAfter.recent) && this.#trimTimer === null && !this.#trimActive) {
@@ -66,11 +65,10 @@ export class FlowSyncServer {
     }
 
     async trim(): Promise<boolean> {
-        let wasTrimmed = false;
         const attempt = async (dataBefore: FlowHeadData) => {
             const dataAfter = await getTrimmedHead(this.#logger, this.#blobStore, dataBefore);
             if (dataAfter !== ABORT_SYMBOL) {
-                wasTrimmed = dataAfter.recent.length !== dataBefore.recent.length;
+                success = dataAfter.recent.length !== dataBefore.recent.length;
             }
             return dataAfter;
         };
@@ -84,19 +82,21 @@ export class FlowSyncServer {
             return false;
         }
 
+        let success = false;
         try {
             this.#trimActive = true;
-            updateHeadBlob(
+            const result = await updateHeadBlob(
                 this.#logger,
                 this.#blobStore,
                 attempt,
             );
-            return wasTrimmed;
+            if (result !== ABORT_SYMBOL) {
+                success = true;
+            }
         } finally {
             this.#trimActive = false;
         }
-
-        return false;
+        return success;
     }
 
     async #trimInBackground(): Promise<void> {
@@ -107,5 +107,10 @@ export class FlowSyncServer {
         }
     }
 }
+
+const getSessionInfo = (key: string, user: Partial<ServerUser> = {}): ServerSession => {
+    const { uid = "", name = "" } = user;
+    return { key, uid, name };
+};
 
 const TRIM_INTERVAL = 10 * ONE_SECOND;

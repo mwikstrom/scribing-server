@@ -8,8 +8,9 @@
 <b>Signature:</b>
 
 ```typescript
-export declare class FlowSyncServer 
+export declare class FlowSyncServer implements FlowSyncProtocol 
 ```
+<b>Implements:</b> FlowSyncProtocol
 
 ## Constructors
 
@@ -22,6 +23,6 @@ export declare class FlowSyncServer
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
 |  [read()](./scribing-server.flowsyncserver.read.md) |  |  |
-|  [sync(input, session)](./scribing-server.flowsyncserver.sync.md) |  |  |
+|  [sync(input, user)](./scribing-server.flowsyncserver.sync.md) |  |  |
 |  [trim()](./scribing-server.flowsyncserver.trim.md) |  |  |
 

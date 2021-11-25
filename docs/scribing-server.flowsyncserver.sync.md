@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-sync(input: FlowSyncInput, session: ServerSession): Promise<FlowSyncOutput | null>;
+sync(input: FlowSyncInput, user?: Partial<ServerUser>): Promise<FlowSyncOutput | null>;
 ```
 
 ## Parameters
@@ -15,7 +15,7 @@ sync(input: FlowSyncInput, session: ServerSession): Promise<FlowSyncOutput | nul
 |  Parameter | Type | Description |
 |  --- | --- | --- |
 |  input | FlowSyncInput |  |
-|  session | [ServerSession](./scribing-server.serversession.md) |  |
+|  user | Partial&lt;[ServerUser](./scribing-server.serveruser.md)<!-- -->&gt; |  |
 
 <b>Returns:</b>
 
