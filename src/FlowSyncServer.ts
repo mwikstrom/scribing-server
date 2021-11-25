@@ -9,6 +9,7 @@ import { ABORT_SYMBOL } from "./internal/retry";
 import { getSyncedHead } from "./internal/sync-head";
 import { ONE_SECOND } from "./internal/time";
 import { shouldTrim, getTrimmedHead } from "./internal/trim";
+import { MemoryBlobStore } from "./MemoryBlobStore";
 
 /** @public */
 export class FlowSyncServer {
@@ -17,7 +18,7 @@ export class FlowSyncServer {
     #trimActive = false;
     #trimTimer: ReturnType<typeof setTimeout> | null = null;
 
-    constructor(blobStore: BlobStore, logger: ServerLogger = console) {
+    constructor(blobStore: BlobStore = new MemoryBlobStore(), logger: ServerLogger = console) {
         this.#blobStore = blobStore;
         this.#logger = logger;
     }

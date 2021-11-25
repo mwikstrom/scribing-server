@@ -1,5 +1,6 @@
-import { BlobConditions, BlobReadResult, BlobStore, BlobWriteResult } from "../src";
+import { BlobConditions, BlobReadResult, BlobStore, BlobWriteResult } from ".";
 
+/** @public */
 export class MemoryBlobStore implements BlobStore {
     #blobs = new Map<string, BlobReadResult>();
 

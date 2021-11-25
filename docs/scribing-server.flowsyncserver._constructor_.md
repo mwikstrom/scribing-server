@@ -9,7 +9,7 @@ Constructs a new instance of the `FlowSyncServer` class
 <b>Signature:</b>
 
 ```typescript
-constructor(blobStore: BlobStore, logger?: ServerLogger);
+constructor(blobStore?: BlobStore, logger?: ServerLogger);
 ```
 
 ## Parameters

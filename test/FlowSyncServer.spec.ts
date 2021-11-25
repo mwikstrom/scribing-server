@@ -1,10 +1,8 @@
 import { FlowSyncServer } from "../src";
-import { MemoryBlobStore } from "./MemoryBlobStore";
 
 describe("FlowSyncServer", () => {
-    it("can be constructed", () => {
-        const blobs = new MemoryBlobStore();
-        const server = new FlowSyncServer(blobs);
+    it("can be constructed without parameters", () => {
+        const server = new FlowSyncServer();
         expect(server).toBeInstanceOf(FlowSyncServer);
     });
 });

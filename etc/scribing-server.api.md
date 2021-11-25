@@ -65,13 +65,21 @@ export const FlowChangeType: RecordType<FlowChange>;
 
 // @public (undocumented)
 export class FlowSyncServer {
-    constructor(blobStore: BlobStore, logger?: ServerLogger);
+    constructor(blobStore?: BlobStore, logger?: ServerLogger);
     // (undocumented)
     read(): Promise<FlowSyncSnapshot>;
     // (undocumented)
     sync(input: FlowSyncInput, session: ServerSession): Promise<FlowSyncOutput | null>;
     // (undocumented)
     trim(): Promise<boolean>;
+}
+
+// @public (undocumented)
+export class MemoryBlobStore implements BlobStore {
+    // (undocumented)
+    read(key: string): Promise<BlobReadResult | null>;
+    // (undocumented)
+    write(key: string, blob: Blob, conditions?: BlobConditions): Promise<BlobWriteResult | null>;
 }
 
 // @public (undocumented)

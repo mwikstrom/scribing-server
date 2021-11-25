@@ -11,6 +11,7 @@ Server for collaborative rich text editing
 |  Class | Description |
 |  --- | --- |
 |  [FlowSyncServer](./scribing-server.flowsyncserver.md) |  |
+|  [MemoryBlobStore](./scribing-server.memoryblobstore.md) |  |
 
 ## Functions
 

@@ -8,3 +8,4 @@ export * from "./ServerSession";
 export * from "./FlowChange";
 export * from "./ServerLogger";
 export * from "./FlowSyncServer";
+export * from "./MemoryBlobStore";
