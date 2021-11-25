@@ -16,6 +16,13 @@ export const getSyncedPresence = (
     return [...other, mine];
 };
 
+/** @internal */
+export const excludeMyPresence = (
+    array: readonly FlowPresence[],
+    client: string,
+    user: string,
+): FlowPresence[] => array.filter(presence => !isMine(presence, client, user));
+
 const isMine = (presence: FlowPresence, client: string, user: string) => (
     presence.client === client &&
     presence.user === user

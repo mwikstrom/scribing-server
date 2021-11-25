@@ -9,6 +9,7 @@ import { getSyncedHead } from "./internal/sync-head";
 import { ONE_SECOND } from "./internal/time";
 import { shouldTrim, getTrimmedHead } from "./internal/trim";
 import { MemoryBlobStore } from "./MemoryBlobStore";
+import { excludeMyPresence } from "./internal/sync-presence";
 
 /** @public */
 export class FlowSyncServer implements FlowSyncProtocol {
@@ -52,7 +53,7 @@ export class FlowSyncServer implements FlowSyncProtocol {
         const output: FlowSyncOutput = {
             version: dataAfter.version,
             merge,
-            presence: dataAfter.presence,
+            presence: excludeMyPresence(dataAfter.presence, input.client, user),
         };
 
         if (shouldTrim(dataAfter.recent) && this.#trimTimer === null && !this.#trimActive) {
