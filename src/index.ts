@@ -4,7 +4,6 @@
  */
 
 export * from "./BlobStore";
-export * from "./ServerSession";
 export * from "./FlowChange";
 export * from "./ServerLogger";
 export * from "./FlowSyncServer";

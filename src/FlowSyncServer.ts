@@ -1,5 +1,4 @@
 import { BlobStore } from "./BlobStore";
-import { ServerSession, ServerUser } from "./ServerSession";
 import { FlowHeadData } from "./internal/FlowHeadData";
 import { ServerLogger } from "./ServerLogger";
 import { FlowOperation, FlowSyncInput, FlowSyncOutput, FlowSyncProtocol, FlowSyncSnapshot } from "scribing";
@@ -29,11 +28,10 @@ export class FlowSyncServer implements FlowSyncProtocol {
         return { version, content, theme, presence }; 
     }
     
-    async sync(input: FlowSyncInput, user?: Partial<ServerUser>): Promise<FlowSyncOutput | null> {
+    async sync(input: FlowSyncInput, user = ""): Promise<FlowSyncOutput | null> {
         let merge: FlowOperation | null = null;
-        const session = getSessionInfo(input.key, user);
         const attempt = async (dataBefore: FlowHeadData): Promise<FlowHeadData | typeof ABORT_SYMBOL> => {
-            const result = getSyncedHead(input, session, dataBefore);
+            const result = getSyncedHead(input, user, dataBefore);
             if (result === CONFLICT_SYMBOL) {
                 return ABORT_SYMBOL;
             }
@@ -107,10 +105,5 @@ export class FlowSyncServer implements FlowSyncProtocol {
         }
     }
 }
-
-const getSessionInfo = (key: string, user: Partial<ServerUser> = {}): ServerSession => {
-    const { uid = "", name = "" } = user;
-    return { key, uid, name };
-};
 
 const TRIM_INTERVAL = 10 * ONE_SECOND;

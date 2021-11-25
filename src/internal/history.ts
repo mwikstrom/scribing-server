@@ -73,7 +73,7 @@ const getMergedChunk = (
         const missingEntry: FlowChange = {
             at: new Date(),
             op: new FlowBatch(),
-            by: { key: "", uid: "", name: "" }
+            by: "",
         };
         logger.error(`Inserting ${missing} missing change(s) at index ${insertionIndex}`);
         keepBefore.push(...new Array(missing).fill(missingEntry));

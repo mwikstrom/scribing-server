@@ -1,19 +1,18 @@
-import { arrayType, recordType, RecordType, timestampType } from "paratype";
+import { arrayType, recordType, RecordType, stringType, timestampType } from "paratype";
 import { FlowOperation } from "scribing";
-import { ServerSession, ServerSessionType } from "./ServerSession";
 
 /** @internal */
 export interface FlowChange {
     at: Date;
     op: FlowOperation;
-    by: ServerSession;
+    by: string;
 }
 
 /** @internal */
 export const FlowChangeType: RecordType<FlowChange> = recordType({
     at: timestampType,
     op: FlowOperation.baseType,
-    by: ServerSessionType,
+    by: stringType,
 });
 
 /** @internal */

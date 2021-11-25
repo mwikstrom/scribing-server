@@ -1,22 +1,25 @@
 import { FlowPresence, FlowSelection, FlowOperation } from "scribing";
-import { ServerSession } from "../ServerSession";
 import { getAge, ONE_SECOND } from "./time";
 
 /** @internal */
 export const getSyncedPresence = (
     before: readonly FlowPresence[],
-    session: ServerSession,
+    client: string,
+    user: string,
     selection: FlowSelection | null,
     operation: FlowOperation | null,
 ): FlowPresence[] => {
     const other = before
-        .filter(presence => !isMine(presence, session) && isFresh(presence))
+        .filter(presence => !isMine(presence, client, user) && isFresh(presence))
         .map(presence => transformOther(presence, operation));
-    const mine = makeMine(session, selection);
+    const mine = makeMine(client, user, selection);
     return [...other, mine];
 };
 
-const isMine = (presence: FlowPresence, session: ServerSession) => presence.key === session.key;
+const isMine = (presence: FlowPresence, client: string, user: string) => (
+    presence.client === client &&
+    presence.user === user
+);
 
 const isFresh = (presence: FlowPresence): boolean => getAge(presence.seen) <= MAX_PRESENCE_AGE;
 
@@ -30,11 +33,10 @@ const transformOther = (presence: FlowPresence, operation: FlowOperation | null)
     return presence;
 };
 
-const makeMine = (session: ServerSession, selection: FlowSelection | null): FlowPresence => ({
-    key: session.key,
-    uid: session.uid,
+const makeMine = (client: string, user: string, selection: FlowSelection | null): FlowPresence => ({
+    client,
+    user,
     seen: new Date(),
-    name: session.name,
     selection,
 });
 

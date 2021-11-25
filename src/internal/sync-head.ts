@@ -1,6 +1,5 @@
 import { FlowContent, FlowOperation, FlowSelection, FlowSyncInput } from "scribing";
 import { FlowChange } from "../FlowChange";
-import { ServerSession } from "../ServerSession";
 import { FlowHeadData } from "./FlowHeadData";
 import { CONFLICT_SYMBOL, getMergeOperation } from "./merge";
 import { getSyncedPresence } from "./sync-presence";
@@ -14,7 +13,7 @@ export interface SyncedHeadResult {
 /** @internal */
 export const getSyncedHead = (
     input: FlowSyncInput,
-    session: ServerSession,
+    user: string,
     dataBefore: FlowHeadData
 ): SyncedHeadResult | typeof CONFLICT_SYMBOL => {
     const merge = getMergeOperation(input, dataBefore);
@@ -24,10 +23,10 @@ export const getSyncedHead = (
     }
 
     const operation = getOperationToApply(input.operation, merge);
-    const recent = getSyncedRecent(dataBefore.recent, session, operation);
+    const recent = getSyncedRecent(dataBefore.recent, user, operation);
     const content = getSyncedContent(dataBefore.content, operation);
     const selection = getSyncedSelection(input.selection, merge, operation);
-    const presence = getSyncedPresence(dataBefore.presence, session, selection, operation);
+    const presence = getSyncedPresence(dataBefore.presence, input.client, user, selection, operation);
     const dataAfter: FlowHeadData = {
         version: dataBefore.version + 1,
         content,
@@ -70,7 +69,7 @@ const getSyncedSelection = (
 
 const getSyncedRecent = (
     before: readonly FlowChange[],    
-    session: ServerSession,
+    user: string,
     operation: FlowOperation | null,
 ): FlowChange[] => {
     if (operation === null) {
@@ -78,7 +77,7 @@ const getSyncedRecent = (
     } else {
         return [...before, {
             at: new Date(),
-            by: session,
+            by: user,
             op: operation,
         }];
     }
