@@ -27,5 +27,6 @@ Server for collaborative rich text editing
 |  [BlobReadResult](./scribing-server.blobreadresult.md) |  |
 |  [BlobStore](./scribing-server.blobstore.md) |  |
 |  [BlobWriteResult](./scribing-server.blobwriteresult.md) |  |
+|  [FlowSyncServerOptions](./scribing-server.flowsyncserveroptions.md) |  |
 |  [ServerLogger](./scribing-server.serverlogger.md) |  |
 

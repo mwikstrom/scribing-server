@@ -9,13 +9,12 @@ Constructs a new instance of the `FlowSyncServer` class
 <b>Signature:</b>
 
 ```typescript
-constructor(blobStore?: BlobStore, logger?: ServerLogger);
+constructor(options?: FlowSyncServerOptions);
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  blobStore | [BlobStore](./scribing-server.blobstore.md) |  |
-|  logger | [ServerLogger](./scribing-server.serverlogger.md) |  |
+|  options | [FlowSyncServerOptions](./scribing-server.flowsyncserveroptions.md) |  |
 

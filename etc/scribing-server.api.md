@@ -4,6 +4,7 @@
 
 ```ts
 
+import { FlowContent } from 'scribing';
 import { FlowOperation } from 'scribing';
 import { FlowSyncInput } from 'scribing';
 import { FlowSyncOutput } from 'scribing';
@@ -66,13 +67,23 @@ export const FlowChangeType: RecordType<FlowChange>;
 
 // @public (undocumented)
 export class FlowSyncServer implements FlowSyncProtocol {
-    constructor(blobStore?: BlobStore, logger?: ServerLogger);
+    constructor(options?: FlowSyncServerOptions);
     // (undocumented)
     read(): Promise<FlowSyncSnapshot>;
     // (undocumented)
     sync(input: FlowSyncInput, user?: string): Promise<FlowSyncOutput | null>;
     // (undocumented)
     trim(): Promise<boolean>;
+}
+
+// @public (undocumented)
+export interface FlowSyncServerOptions {
+    // (undocumented)
+    blobStore?: BlobStore;
+    // (undocumented)
+    initialContent?: FlowContent;
+    // (undocumented)
+    logger?: ServerLogger;
 }
 
 // @public (undocumented)

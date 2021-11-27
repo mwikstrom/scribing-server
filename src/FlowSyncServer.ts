@@ -1,7 +1,14 @@
 import { BlobStore } from "./BlobStore";
 import { FlowHeadData } from "./internal/FlowHeadData";
 import { ServerLogger } from "./ServerLogger";
-import { FlowOperation, FlowSyncInput, FlowSyncOutput, FlowSyncProtocol, FlowSyncSnapshot } from "scribing";
+import { 
+    FlowContent, 
+    FlowOperation, 
+    FlowSyncInput, 
+    FlowSyncOutput, 
+    FlowSyncProtocol, 
+    FlowSyncSnapshot,
+} from "scribing";
 import { readHeadBlob, updateHeadBlob } from "./internal/head-blob";
 import { CONFLICT_SYMBOL } from "./internal/merge";
 import { ABORT_SYMBOL } from "./internal/retry";
@@ -12,19 +19,33 @@ import { MemoryBlobStore } from "./MemoryBlobStore";
 import { excludeMyPresence } from "./internal/sync-presence";
 
 /** @public */
+export interface FlowSyncServerOptions {
+    blobStore?: BlobStore;
+    logger?: ServerLogger;
+    initialContent?: FlowContent;
+}
+
+/** @public */
 export class FlowSyncServer implements FlowSyncProtocol {
-    #blobStore: BlobStore;
-    #logger: ServerLogger;
+    readonly #blobStore: BlobStore;
+    readonly #logger: ServerLogger;
+    readonly #initialContent: FlowContent;
     #trimActive = false;
     #trimTimer: ReturnType<typeof setTimeout> | null = null;
 
-    constructor(blobStore: BlobStore = new MemoryBlobStore(), logger: ServerLogger = console) {
+    constructor(options: FlowSyncServerOptions = {}) {
+        const {
+            blobStore = new MemoryBlobStore(),
+            logger = console,
+            initialContent = FlowContent.empty,
+        } = options;
         this.#blobStore = blobStore;
         this.#logger = logger;
+        this.#initialContent = initialContent;
     }
 
     async read(): Promise<FlowSyncSnapshot> {   
-        const data = await readHeadBlob(this.#blobStore);
+        const data = await readHeadBlob(this.#blobStore, this.#initialContent);
         const { version, content, theme, presence } = data;
         return { version, content, theme, presence }; 
     }
@@ -43,6 +64,7 @@ export class FlowSyncServer implements FlowSyncProtocol {
         const dataAfter = await updateHeadBlob(
             this.#logger,
             this.#blobStore,
+            this.#initialContent,
             attempt,
         );
         
@@ -87,6 +109,7 @@ export class FlowSyncServer implements FlowSyncProtocol {
             const result = await updateHeadBlob(
                 this.#logger,
                 this.#blobStore,
+                this.#initialContent,
                 attempt,
             );
             if (result !== ABORT_SYMBOL) {

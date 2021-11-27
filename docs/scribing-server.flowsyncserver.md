@@ -16,7 +16,7 @@ export declare class FlowSyncServer implements FlowSyncProtocol
 
 |  Constructor | Modifiers | Description |
 |  --- | --- | --- |
-|  [(constructor)(blobStore, logger)](./scribing-server.flowsyncserver._constructor_.md) |  | Constructs a new instance of the <code>FlowSyncServer</code> class |
+|  [(constructor)(options)](./scribing-server.flowsyncserver._constructor_.md) |  | Constructs a new instance of the <code>FlowSyncServer</code> class |
 
 ## Methods
 
