@@ -23,12 +23,13 @@ export const getSyncedHead = (
     }
 
     const operation = getOperationToApply(input.operation, merge);
+    const version = operation === null ? dataBefore.version : dataBefore.version + 1;
     const recent = getSyncedRecent(dataBefore.recent, user, operation);
     const content = getSyncedContent(dataBefore.content, operation);
     const selection = getSyncedSelection(input.selection, merge);
     const presence = getSyncedPresence(dataBefore.presence, input.client, user, selection, operation);
     const dataAfter: FlowHeadData = {
-        version: dataBefore.version + 1,
+        version,
         content,
         theme: dataBefore.theme,
         recent,
