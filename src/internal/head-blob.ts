@@ -5,7 +5,7 @@ import { ServerLogger } from "../ServerLogger";
 import { getJsonData } from "./json-blob";
 import { ABORT_SYMBOL } from "./retry";
 import { updateBlob } from "./update-blob";
-import { FlowContent, DefaultFlowTheme, FlowPresence } from "scribing";
+import { FlowContent, DefaultFlowTheme, FlowPresence, ResetContent } from "scribing";
 
 /** @internal */
 export const readHeadBlob = async (blobStore: BlobStore, initialContent: FlowContent): Promise<FlowHeadData> => {
@@ -34,17 +34,16 @@ export const updateHeadBlob = async (
 
 const HEAD_BLOB_KEY = "head";
 
-const INITIAL_DATA_CACHE = new WeakMap<FlowContent, FlowHeadData>();
-const getInitialHeadData = (content: FlowContent): FlowHeadData => {
-    let cached = INITIAL_DATA_CACHE.get(content);
-    if (!cached) {
-        INITIAL_DATA_CACHE.set(content, cached = Object.freeze({
-            version: 0,
-            content,
-            theme: DefaultFlowTheme.instance,
-            recent: Object.freeze(new Array<FlowChange>(0)) as FlowChange[],
-            presence: Object.freeze(new Array<FlowPresence>(0)) as FlowPresence[],
-        }));
-    }
-    return cached;
-};
+const getInitialHeadData = (content: FlowContent): FlowHeadData => Object.freeze({
+    version: 1,
+    content,
+    theme: DefaultFlowTheme.instance,
+    recent: Object.freeze([getInitialChange(content)]) as FlowChange[],
+    presence: Object.freeze(new Array<FlowPresence>(0)) as FlowPresence[],
+});
+
+const getInitialChange = (content: FlowContent): FlowChange => Object.freeze({
+    at: new Date(),
+    op: new ResetContent({ content }),
+    by: "",
+});

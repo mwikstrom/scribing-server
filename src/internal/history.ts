@@ -33,7 +33,7 @@ const storeChunk = async (
 ): Promise<number> => {
     const chunkNumber = Math.floor(tailVersion / CHUNK_VERSION_COUNT);
     const chunkVersion = chunkNumber * CHUNK_VERSION_COUNT;
-    const insertionIndex = tailVersion - chunkVersion;
+    const insertionIndex = tailVersion - chunkVersion - 1;
     const insertionCount = Math.max(0, Math.min(CHUNK_VERSION_COUNT - insertionIndex, changes.length));
     
     if (insertionCount > 0) {
