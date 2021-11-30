@@ -70,7 +70,7 @@ const getSyncedRecent = (
         return [...before];
     } else {
         return [...before, {
-            at: new Date(),
+            ts: new Date(),
             by: user,
             op: operation,
         }];

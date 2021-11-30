@@ -82,17 +82,17 @@ describe("FlowSyncServer", () => {
             version: 4,
             content: ["Hello foobar!"],
             recent: [
-                { at: ts1, by: "A", op: { insert: ["!"], at: 6} },
-                { at: ts2, by: "C", op: { insert: ["Hello "], at: 0} },
+                { ts: ts1, by: "A", op: { insert: ["!"], at: 6} },
+                { ts: ts2, by: "C", op: { insert: ["Hello "], at: 0} },
             ]
         });
 
         const changes = await blobStore.read("changes_0000000000000");
         expect(changes).not.toBeNull();
         expect(JSON.parse(await readBlobText(changes!.blob))).toMatchObject([
-            { at: ts0, by: "", op: { reset: "content", content: [] } },
-            { at: ts0, by: "A", op: { insert: ["foo"], at: 0} },
-            { at: ts0, by: "B", op: { insert: ["bar"], at: 3} },
+            { ts: ts0, by: "", op: { reset: "content", content: [] } },
+            { ts: ts0, by: "A", op: { insert: ["foo"], at: 0} },
+            { ts: ts0, by: "B", op: { insert: ["bar"], at: 3} },
         ]);
     });
 });

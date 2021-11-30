@@ -3,14 +3,14 @@ import { FlowOperation } from "scribing";
 
 /** @internal */
 export interface FlowChange {
-    at: Date;
+    ts: Date;
     op: FlowOperation;
     by: string;
 }
 
 /** @internal */
 export const FlowChangeType: RecordType<FlowChange> = recordType({
-    at: timestampType,
+    ts: timestampType,
     op: FlowOperation.baseType,
     by: stringType,
 });

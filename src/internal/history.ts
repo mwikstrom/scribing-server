@@ -71,7 +71,7 @@ const getMergedChunk = (
 
     if (missing > 0) {
         const missingEntry: FlowChange = {
-            at: new Date(),
+            ts: new Date(),
             op: new FlowBatch(),
             by: "",
         };

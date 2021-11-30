@@ -31,7 +31,7 @@ const getTrimCount = (recent: readonly FlowChange[]): number => {
     let count = 0;
     
     for (const change of recent) {
-        if (getAge(change.at) > KEEP_RECENT_AGE) {
+        if (getAge(change.ts) > KEEP_RECENT_AGE) {
             ++count;
         } else {
             break;
