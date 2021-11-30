@@ -12,7 +12,7 @@ export const getMergeOperation = (
     } else if (behind === 0) {
         return null;
     } else {
-        return FlowBatch.fromArray(data.recent.map(change => change.op).slice(-behind));
+        return FlowBatch.fromArray(data.recent.map(change => change.o).slice(-behind));
     }    
 };
 
