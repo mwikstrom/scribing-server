@@ -1,26 +1,22 @@
-import { FlowBatch } from "scribing";
 import { BlobStore } from "../BlobStore";
 import { FlowChange } from "./FlowChange";
 import { ServerLogger } from "../ServerLogger";
 import { updateChunkBlob } from "./chunk-blob";
 import { ABORT_SYMBOL } from "./retry";
+import { getMergedChanges } from "./merge";
 
 /** @internal */
 export const storeHistory = async (
     logger: ServerLogger,
     blobStore: BlobStore,
-    headVersion: number,
     changes: readonly FlowChange[],
 ): Promise<boolean> => {
-    let tailVersion = headVersion - changes.length;
     while (changes.length > 0) {
-        const count = await storeChunk(logger, blobStore, tailVersion, changes);
-        if (count > 0) {
-            tailVersion += count;
-            changes = changes.slice(count);
-        } else {
+        const next = await storeChunk(logger, blobStore, changes);
+        if (next === null) {
             return false;
         }
+        changes = next;
     }
     return true;
 };
@@ -28,58 +24,27 @@ export const storeHistory = async (
 const storeChunk = async (
     logger: ServerLogger,
     blobStore: BlobStore,
-    tailVersion: number,
     changes: readonly FlowChange[],
-): Promise<number> => {
-    const chunkNumber = Math.floor(tailVersion / CHUNK_VERSION_COUNT);
-    const chunkVersion = chunkNumber * CHUNK_VERSION_COUNT;
-    const insertionIndex = tailVersion - chunkVersion - 1;
-    const insertionCount = Math.max(0, Math.min(CHUNK_VERSION_COUNT - insertionIndex, changes.length));
-    
-    if (insertionCount > 0) {
-        const result = await updateChunkBlob(
-            logger,
-            blobStore,
-            chunkNumber, 
-            async (dataBefore, blobLogger) => getMergedChunk(
-                dataBefore,
-                blobLogger,
-                insertionIndex,
-                insertionCount,
-                changes
-            ),
-        );
+): Promise<FlowChange[] | null> => {
+    const minVersion = changes.reduce((prev, curr) => Math.min(prev, curr.v), 0);
+    const chunkNumber = Math.floor(minVersion / CHUNK_VERSION_COUNT);
+    const maxVersion = chunkNumber * CHUNK_VERSION_COUNT + CHUNK_VERSION_COUNT - 1;
+    const inChunk = (c: FlowChange) => c.v >= minVersion && c.v <= maxVersion;
+    const notInChunk = (c: FlowChange) => !inChunk(c);
+    const toStore = changes.filter(inChunk);
+    const toReturn = changes.filter(notInChunk);
+    const result = await updateChunkBlob(
+        logger,
+        blobStore,
+        chunkNumber, 
+        async dataBefore => getMergedChanges(dataBefore, toStore),
+    );
 
-        if (result === ABORT_SYMBOL) {
-            return 0;
-        }
+    if (result === ABORT_SYMBOL) {
+        return null;
     }
 
-    return insertionCount;
-};
-
-const getMergedChunk = (
-    dataBefore: readonly FlowChange[],
-    logger: ServerLogger,
-    insertionIndex: number,
-    insertionCount: number,
-    changes: readonly FlowChange[],
-): FlowChange[] => {
-    const keepBefore = dataBefore.slice(0, insertionIndex);
-    const keepAfter = dataBefore.slice(insertionIndex + insertionCount);
-    const missing = insertionIndex - keepBefore.length;
-
-    if (missing > 0) {
-        const missingEntry: FlowChange = {
-            t: new Date(),
-            u: "",
-            o: new FlowBatch(),
-        };
-        logger.error(`Inserting ${missing} missing change(s) at index ${insertionIndex}`);
-        keepBefore.push(...new Array(missing).fill(missingEntry));
-    }
-
-    return [...keepBefore, ...changes.slice(0, insertionCount), ...keepAfter];
+    return toReturn;
 };
 
 const CHUNK_VERSION_COUNT = 1000;

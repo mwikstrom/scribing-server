@@ -24,7 +24,7 @@ export const getSyncedHead = (
 
     const operation = getOperationToApply(input.operation, merge);
     const version = operation === null ? dataBefore.version : dataBefore.version + 1;
-    const recent = getSyncedRecent(dataBefore.recent, user, operation);
+    const recent = getSyncedRecent(dataBefore.recent, user, operation, version);
     const content = getSyncedContent(dataBefore.content, operation);
     const selection = getSyncedSelection(input.selection, merge);
     const presence = getSyncedPresence(dataBefore.presence, input.client, user, selection, operation);
@@ -65,11 +65,13 @@ const getSyncedRecent = (
     before: readonly FlowChange[],    
     user: string,
     operation: FlowOperation | null,
+    version: number,
 ): FlowChange[] => {
     if (operation === null) {
         return [...before];
     } else {
         return [...before, {
+            v: version,
             t: new Date(),
             u: user,
             o: operation,

@@ -43,6 +43,7 @@ const getInitialHeadData = (content: FlowContent): FlowHeadData => Object.freeze
 });
 
 const getInitialChange = (content: FlowContent): FlowChange => Object.freeze({
+    v: 0,
     t: new Date(),
     u: "",
     o: new ResetContent({ content }),

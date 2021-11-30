@@ -16,7 +16,7 @@ export const getTrimmedHead = async (
     const trimCount = getTrimCount(recent);
     const keepCount = recent.length - trimCount;
     const trimmedRecent = keepCount > 0 ? recent.slice(-keepCount) : [];
-    const success = await storeHistory(logger, blobStore, rest.version, recent.slice(0, trimCount));
+    const success = await storeHistory(logger, blobStore, recent.slice(0, trimCount));
     if (!success) {
         return ABORT_SYMBOL;
     }

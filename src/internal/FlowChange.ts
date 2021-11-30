@@ -3,6 +3,8 @@ import { FlowOperation } from "scribing";
 
 /** @internal */
 export interface FlowChange {
+    /** Resulting version number */
+    v: number;
     /** Timestamp */
     t: Date;
     /** Actor user identifier, or empty when anonymous or unknown */
@@ -13,6 +15,7 @@ export interface FlowChange {
 
 /** @internal */
 export const FlowChangeType: RecordType<FlowChange> = recordType({
+    v: nonNegativeIntegerType,
     t: timestampType,
     u: stringType,
     o: FlowOperation.baseType,
