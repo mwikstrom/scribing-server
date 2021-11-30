@@ -15,39 +15,39 @@ describe("FlowSyncServer", () => {
         const blobStore = new MemoryBlobStore();
         const server = new FlowSyncServer({blobStore});
 
-        // Client A insert "foo" at position 0, based on version 1
-        const output1 = await server.sync(FlowSyncInputType.fromJsonValue({
-            version: 1,
+        // Client A insert "foo" at position 0, based on version 0
+        const v1 = await server.sync(FlowSyncInputType.fromJsonValue({
+            version: 0,
             client: "A",
             selection: null,
             operation: { "insert": ["foo"], at: 0 },            
         }), "A");
-        expect(output1?.merge).toBeNull();
-        expect(output1?.version).toBe(2);
+        expect(v1?.merge).toBeNull();
+        expect(v1?.version).toBe(1);
 
-        // Client B insert "bar" at position 0, based on version 1
-        const output2 = await server.sync(FlowSyncInputType.fromJsonValue({
-            version: 1,
+        // Client B insert "bar" at position 0, based on version 0
+        const v2 = await server.sync(FlowSyncInputType.fromJsonValue({
+            version: 0,
             client: "B",
             selection: null,
             operation: { "insert": ["bar"], at: 0 },            
         }), "B");
-        expect(FlowOperation.baseType.toJsonValue(output2!.merge!)).toMatchObject({ "insert": ["foo"], at: 0 });
-        expect(output2?.version).toBe(3);
+        expect(FlowOperation.baseType.toJsonValue(v2!.merge!)).toMatchObject({ "insert": ["foo"], at: 0 });
+        expect(v2?.version).toBe(2);
 
         // Let 3 minutes pass
         const ts0 = new Date().toISOString();
         jest.advanceTimersByTime(3 * 60 * 1000);
 
-        // Client A insert "!" at position 3, based on version 2
-        const output3 = await server.sync(FlowSyncInputType.fromJsonValue({
-            version: 2,
+        // Client A insert "!" at position 3, based on version 1
+        const v3 = await server.sync(FlowSyncInputType.fromJsonValue({
+            version: 1,
             client: "A",
             selection: null,
             operation: { "insert": ["!"], at: 3 },
         }), "A");
-        expect(FlowOperation.baseType.toJsonValue(output3!.merge!)).toMatchObject({ "insert": ["bar"], at: 3 });
-        expect(output3?.version).toBe(4);
+        expect(FlowOperation.baseType.toJsonValue(v3!.merge!)).toMatchObject({ "insert": ["bar"], at: 3 });
+        expect(v3?.version).toBe(3);
 
         // Let another 3 minutes pass to make version 0 thru 2 eligable for trimming
         const ts1 = new Date().toISOString();
@@ -57,29 +57,29 @@ describe("FlowSyncServer", () => {
         // Run trim
         expect(await server.trim()).toBe(true);
 
-        // Client C insert "Hello " at position 0, based on version 1
-        const output4 = await server.sync(FlowSyncInputType.fromJsonValue({
-            version: 1,
+        // Client C insert "Hello " at position 0, based on version 0 (purged now)
+        const conflict = await server.sync(FlowSyncInputType.fromJsonValue({
+            version: 0,
             client: "C",
             selection: null,
             operation: { "insert": ["Hello "], at: 0 },
         }), "C");
-        expect(output4).toBeNull(); // CONFLICT! -- version purged
+        expect(conflict).toBeNull(); // CONFLICT! -- version purged
 
-        // Client C insert "Hello " at position 0, based on version 4
-        const output5 = await server.sync(FlowSyncInputType.fromJsonValue({
-            version: 4,
+        // Client C insert "Hello " at position 0, based on version 3
+        const v4 = await server.sync(FlowSyncInputType.fromJsonValue({
+            version: 3,
             client: "C",
             selection: null,
             operation: { "insert": ["Hello "], at: 0 },
         }), "C");
-        expect(output5?.merge).toBeNull();
-        expect(output5?.version).toBe(5);
+        expect(v4?.merge).toBeNull();
+        expect(v4?.version).toBe(4);
 
         const head = await blobStore.read("head");
         expect(head).not.toBeNull();
         expect(JSON.parse(await readBlobText(head!.blob))).toMatchObject({
-            version: 5,
+            version: 4,
             content: ["Hello foobar!"],
             recent: [
                 { at: ts1, by: "A", op: { insert: ["!"], at: 6} },

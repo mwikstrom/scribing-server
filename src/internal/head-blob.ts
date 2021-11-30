@@ -35,7 +35,7 @@ export const updateHeadBlob = async (
 const HEAD_BLOB_KEY = "head";
 
 const getInitialHeadData = (content: FlowContent): FlowHeadData => Object.freeze({
-    version: 1,
+    version: 0,
     content,
     theme: DefaultFlowTheme.instance,
     recent: Object.freeze([getInitialChange(content)]) as FlowChange[],
