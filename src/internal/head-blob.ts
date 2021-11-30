@@ -1,5 +1,5 @@
 import { BlobStore } from "../BlobStore";
-import { FlowChange } from "../FlowChange";
+import { FlowChange } from "./FlowChange";
 import { FlowHeadData, FlowHeadDataType } from "./FlowHeadData";
 import { ServerLogger } from "../ServerLogger";
 import { getJsonData } from "./json-blob";

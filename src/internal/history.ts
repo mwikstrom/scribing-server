@@ -1,6 +1,6 @@
 import { FlowBatch } from "scribing";
 import { BlobStore } from "../BlobStore";
-import { FlowChange } from "../FlowChange";
+import { FlowChange } from "./FlowChange";
 import { ServerLogger } from "../ServerLogger";
 import { updateChunkBlob } from "./chunk-blob";
 import { ABORT_SYMBOL } from "./retry";

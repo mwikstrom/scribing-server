@@ -5,13 +5,10 @@
 ```ts
 
 import { FlowContent } from 'scribing';
-import { FlowOperation } from 'scribing';
 import { FlowSyncInput } from 'scribing';
 import { FlowSyncOutput } from 'scribing';
 import { FlowSyncProtocol } from 'scribing';
 import { FlowSyncSnapshot } from 'scribing';
-import { RecordType } from 'paratype';
-import { Type } from 'paratype';
 
 // @public (undocumented)
 export interface BlobConditions {
@@ -42,28 +39,6 @@ export interface BlobWriteResult {
     // (undocumented)
     etag: string;
 }
-
-// Warning: (ae-internal-missing-underscore) The name "FlowChange" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal (undocumented)
-export interface FlowChange {
-    // (undocumented)
-    at: Date;
-    // (undocumented)
-    by: string;
-    // (undocumented)
-    op: FlowOperation;
-}
-
-// Warning: (ae-internal-missing-underscore) The name "FlowChangeArrayType" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal (undocumented)
-export const FlowChangeArrayType: Type<FlowChange[]>;
-
-// Warning: (ae-internal-missing-underscore) The name "FlowChangeType" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal (undocumented)
-export const FlowChangeType: RecordType<FlowChange>;
 
 // @public (undocumented)
 export class FlowSyncServer implements FlowSyncProtocol {

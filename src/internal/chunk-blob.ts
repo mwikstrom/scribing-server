@@ -1,5 +1,5 @@
 import { BlobStore } from "../BlobStore";
-import { FlowChange, FlowChangeArrayType } from "../FlowChange";
+import { FlowChange, FlowChangeArrayType } from "./FlowChange";
 import { ServerLogger } from "../ServerLogger";
 import { ABORT_SYMBOL } from "./retry";
 import { updateBlob } from "./update-blob";

@@ -1,5 +1,5 @@
 import { BlobStore } from "../BlobStore";
-import { FlowChange } from "../FlowChange";
+import { FlowChange } from "./FlowChange";
 import { ServerLogger } from "../ServerLogger";
 import { FlowHeadData } from "./FlowHeadData";
 import { storeHistory } from "./history";

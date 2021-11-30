@@ -1,5 +1,5 @@
 import { FlowContent, FlowOperation, FlowSelection, FlowSyncInput } from "scribing";
-import { FlowChange } from "../FlowChange";
+import { FlowChange } from "./FlowChange";
 import { FlowHeadData } from "./FlowHeadData";
 import { CONFLICT_SYMBOL, getMergeOperation } from "./merge";
 import { getSyncedPresence } from "./sync-presence";

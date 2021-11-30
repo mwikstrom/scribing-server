@@ -1,6 +1,6 @@
 import { arrayType, nonNegativeIntegerType, recordType, RecordType } from "paratype";
 import { FlowContent, FlowTheme, FlowPresence, FlowPresenceType } from "scribing";
-import { FlowChange, FlowChangeType } from "../FlowChange";
+import { FlowChange, FlowChangeType } from "./FlowChange";
 
 /** @internal */
 export interface FlowHeadData {
