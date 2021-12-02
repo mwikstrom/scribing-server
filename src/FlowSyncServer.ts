@@ -47,7 +47,8 @@ export class FlowSyncServer implements FlowSyncProtocol {
     async read(): Promise<FlowSyncSnapshot> {   
         const data = await readHeadBlob(this.#blobStore, this.#initialContent);
         const { version, content, theme, presence } = data;
-        return { version, content, theme, presence }; 
+        const digest = await content.digest();
+        return { version, content, digest, theme, presence }; 
     }
     
     async sync(input: FlowSyncInput, user = ""): Promise<FlowSyncOutput | null> {
@@ -72,8 +73,10 @@ export class FlowSyncServer implements FlowSyncProtocol {
             return null;
         }
 
+        const digest = await dataAfter.content.digest();
         const output: FlowSyncOutput = {
             version: dataAfter.version,
+            digest,
             merge,
             presence: excludeMyPresence(dataAfter.presence, input.client, user),
         };
