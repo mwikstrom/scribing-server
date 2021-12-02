@@ -1,24 +1,24 @@
-import { BlobStore } from "../BlobStore";
+import { JsonStore } from "../JsonStore";
 import { FlowChange, FlowChangeArrayType } from "./FlowChange";
 import { ServerLogger } from "../ServerLogger";
 import { ABORT_SYMBOL } from "./retry";
-import { updateBlob } from "./update-blob";
+import { update } from "./update";
 
 /** @internal */
-export const updateChunkBlob = async (
+export const updateChunk = async (
     logger: ServerLogger,
-    blobStore: BlobStore,
+    store: JsonStore,
     chunkNumber: number,
     callback: (dataBefore: FlowChange[], logger: ServerLogger) => Promise<FlowChange[] | typeof ABORT_SYMBOL>,
-): Promise<readonly FlowChange[] | typeof ABORT_SYMBOL> => updateBlob(
+): Promise<readonly FlowChange[] | typeof ABORT_SYMBOL> => update(
     logger,
-    blobStore,
-    getChunkBlobKey(chunkNumber),
+    store,
+    getChunkKey(chunkNumber),
     FlowChangeArrayType,
     INITIAL_CHUNK_DATA,
     callback,
 );
 
-const getChunkBlobKey = (chunkNumber: number) => `changes_${chunkNumber.toFixed(0).padStart(13, "0")}`;
+const getChunkKey = (chunkNumber: number) => `changes_${chunkNumber.toFixed(0).padStart(13, "0")}`;
 
 const INITIAL_CHUNK_DATA: FlowChange[] = Object.freeze(new Array<FlowChange>(0)) as FlowChange[];

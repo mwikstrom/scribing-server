@@ -1,4 +1,4 @@
-import { BlobStore } from "./BlobStore";
+import { JsonStore } from "./JsonStore";
 import { FlowHeadData } from "./internal/FlowHeadData";
 import { ServerLogger } from "./ServerLogger";
 import { 
@@ -9,25 +9,25 @@ import {
     FlowSyncProtocol, 
     FlowSyncSnapshot,
 } from "scribing";
-import { readHeadBlob, updateHeadBlob } from "./internal/head-blob";
+import { readHead, updateHead } from "./internal/head";
 import { CONFLICT_SYMBOL } from "./internal/merge";
 import { ABORT_SYMBOL } from "./internal/retry";
 import { getSyncedHead } from "./internal/sync-head";
 import { ONE_SECOND } from "./internal/time";
 import { shouldTrim, getTrimmedHead } from "./internal/trim";
-import { MemoryBlobStore } from "./MemoryBlobStore";
+import { MemoryJsonStore } from "./MemoryJsonStore";
 import { excludeMyPresence } from "./internal/sync-presence";
 
 /** @public */
 export interface FlowSyncServerOptions {
-    blobStore?: BlobStore;
+    store?: JsonStore;
     logger?: ServerLogger;
     initialContent?: FlowContent;
 }
 
 /** @public */
 export class FlowSyncServer implements FlowSyncProtocol {
-    readonly #blobStore: BlobStore;
+    readonly #store: JsonStore;
     readonly #logger: ServerLogger;
     readonly #initialContent: FlowContent;
     #trimActive = false;
@@ -35,17 +35,17 @@ export class FlowSyncServer implements FlowSyncProtocol {
 
     constructor(options: FlowSyncServerOptions = {}) {
         const {
-            blobStore = new MemoryBlobStore(),
+            store = new MemoryJsonStore(),
             logger = console,
             initialContent = FlowContent.empty,
         } = options;
-        this.#blobStore = blobStore;
+        this.#store = store;
         this.#logger = logger;
         this.#initialContent = initialContent;
     }
 
     async read(): Promise<FlowSyncSnapshot> {   
-        const data = await readHeadBlob(this.#blobStore, this.#initialContent);
+        const data = await readHead(this.#store, this.#initialContent);
         const { version, content, theme, presence } = data;
         const digest = await content.digest();
         return { version, content, digest, theme, presence }; 
@@ -62,9 +62,9 @@ export class FlowSyncServer implements FlowSyncProtocol {
             return result.dataAfter;
         };
 
-        const dataAfter = await updateHeadBlob(
+        const dataAfter = await updateHead(
             this.#logger,
-            this.#blobStore,
+            this.#store,
             this.#initialContent,
             attempt,
         );
@@ -90,7 +90,7 @@ export class FlowSyncServer implements FlowSyncProtocol {
 
     async trim(): Promise<boolean> {
         const attempt = async (dataBefore: FlowHeadData) => {
-            const dataAfter = await getTrimmedHead(this.#logger, this.#blobStore, dataBefore);
+            const dataAfter = await getTrimmedHead(this.#logger, this.#store, dataBefore);
             if (dataAfter !== ABORT_SYMBOL) {
                 success = dataAfter.recent.length !== dataBefore.recent.length;
             }
@@ -109,9 +109,9 @@ export class FlowSyncServer implements FlowSyncProtocol {
         let success = false;
         try {
             this.#trimActive = true;
-            const result = await updateHeadBlob(
+            const result = await updateHead(
                 this.#logger,
-                this.#blobStore,
+                this.#store,
                 this.#initialContent,
                 attempt,
             );

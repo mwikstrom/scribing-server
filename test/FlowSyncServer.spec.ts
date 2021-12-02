@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { FlowOperation, FlowSyncInputType } from "scribing";
-import { FlowSyncServer, MemoryBlobStore } from "../src";
-import { readBlobText } from "../src/internal/json-blob";
+import { FlowSyncServer, MemoryJsonStore } from "../src";
 
 jest.useFakeTimers();
 
@@ -12,8 +11,8 @@ describe("FlowSyncServer", () => {
     });
 
     it("can sync and trim", async () => {
-        const blobStore = new MemoryBlobStore();
-        const server = new FlowSyncServer({blobStore});
+        const blobStore = new MemoryJsonStore();
+        const server = new FlowSyncServer({store: blobStore});
 
         // Client A insert "foo" at position 0, based on version 0
         const v1 = await server.sync(FlowSyncInputType.fromJsonValue({
@@ -78,7 +77,7 @@ describe("FlowSyncServer", () => {
 
         const head = await blobStore.read("head");
         expect(head).not.toBeNull();
-        expect(JSON.parse(await readBlobText(head!.blob))).toMatchObject({
+        expect(head!.value).toMatchObject({
             version: 4,
             content: ["Hello foobar!"],
             recent: [
@@ -89,7 +88,7 @@ describe("FlowSyncServer", () => {
 
         const changes = await blobStore.read("changes_0000000000000");
         expect(changes).not.toBeNull();
-        expect(JSON.parse(await readBlobText(changes!.blob))).toMatchObject([
+        expect(changes!.value).toMatchObject([
             { v: 0, t: ts0, u: "", o: { reset: "content", content: [] } },
             { v: 1, t: ts0, u: "A", o: { insert: ["foo"], at: 0} },
             { v: 2, t: ts0, u: "B", o: { insert: ["bar"], at: 3} },

@@ -1,18 +1,18 @@
-import { BlobStore } from "../BlobStore";
+import { JsonStore } from "../JsonStore";
 import { FlowChange } from "./FlowChange";
 import { ServerLogger } from "../ServerLogger";
-import { updateChunkBlob } from "./chunk-blob";
+import { updateChunk } from "./chunk";
 import { ABORT_SYMBOL } from "./retry";
 import { getMergedChanges } from "./merge";
 
 /** @internal */
 export const storeHistory = async (
     logger: ServerLogger,
-    blobStore: BlobStore,
+    store: JsonStore,
     changes: readonly FlowChange[],
 ): Promise<boolean> => {
     while (changes.length > 0) {
-        const next = await storeChunk(logger, blobStore, changes);
+        const next = await storeChunk(logger, store, changes);
         if (next === null) {
             return false;
         }
@@ -23,7 +23,7 @@ export const storeHistory = async (
 
 const storeChunk = async (
     logger: ServerLogger,
-    blobStore: BlobStore,
+    store: JsonStore,
     changes: readonly FlowChange[],
 ): Promise<FlowChange[] | null> => {
     const minVersion = changes.reduce((prev, curr) => Math.min(prev, curr.v), 0);
@@ -33,9 +33,9 @@ const storeChunk = async (
     const notInChunk = (c: FlowChange) => !inChunk(c);
     const toStore = changes.filter(inChunk);
     const toReturn = changes.filter(notInChunk);
-    const result = await updateChunkBlob(
+    const result = await updateChunk(
         logger,
-        blobStore,
+        store,
         chunkNumber, 
         async dataBefore => getMergedChanges(dataBefore, toStore),
     );

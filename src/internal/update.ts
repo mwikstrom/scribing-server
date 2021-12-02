@@ -1,19 +1,18 @@
 import { Type } from "paratype";
-import { BlobConditions, BlobReadResult, BlobStore } from "../BlobStore";
+import { WriteConditions, JsonReadResult, JsonStore } from "../JsonStore";
 import { prefixLogger, ServerLogger } from "../ServerLogger";
-import { getJsonBlob, getJsonData } from "./json-blob";
 import { ABORT_SYMBOL, retry, RETRY_SYMBOL } from "./retry";
 
 /** @internal */
-export const updateBlob = <T>(
+export const update = <T>(
     logger: ServerLogger,
-    store: BlobStore,
+    store: JsonStore,
     key: string,
     dataType: Type<T>,
     initial: T,
     callback: (data: T, logger: ServerLogger) => Promise<T | typeof ABORT_SYMBOL>,
 ): Promise<T | typeof ABORT_SYMBOL> => {
-    const prefixedLogger = prefixLogger(logger, `Update blob ${key}: `);
+    const prefixedLogger = prefixLogger(logger, `Update ${key}: `);
     return retry(
         prefixedLogger, 
         async () => attempt(store, key, dataType, initial, data => callback(data, prefixedLogger)),
@@ -21,20 +20,20 @@ export const updateBlob = <T>(
 };
 
 const attempt = async <T>(
-    store: BlobStore,
+    store: JsonStore,
     key: string,
     dataType: Type<T>,
     initial: T,
     callback: (data: T) => Promise<T | typeof ABORT_SYMBOL>,
 ): Promise<T | typeof RETRY_SYMBOL | typeof ABORT_SYMBOL> => {
     const readResult = await store.read(key);
-    const dataBefore = readResult === null ? initial : await getJsonData(readResult, dataType);
+    const dataBefore = readResult === null ? initial : dataType.fromJsonValue(readResult.value);
     const dataAfter = await callback(dataBefore);
 
     if (dataAfter !== ABORT_SYMBOL && !dataType.equals(dataBefore, dataAfter)) {
-        const blobAfter = getJsonBlob(dataAfter, dataType);
+        const valueAfter = dataType.toJsonValue(dataAfter);
         const writeCondition = getWriteCondition(readResult);
-        const writeResult = await store.write(key, blobAfter, writeCondition);
+        const writeResult = await store.write(key, valueAfter, writeCondition);
         if (writeResult === null) {
             return RETRY_SYMBOL;
         }
@@ -43,7 +42,7 @@ const attempt = async <T>(
     return dataAfter;
 };
 
-const getWriteCondition = (readResult: BlobReadResult | null): BlobConditions => {
+const getWriteCondition = (readResult: JsonReadResult | null): WriteConditions => {
     if (readResult === null) {
         return { ifNoneMatch: "*" };
     } else {

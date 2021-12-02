@@ -1,38 +1,37 @@
-import { BlobStore } from "../BlobStore";
+import { JsonStore } from "../JsonStore";
 import { FlowChange } from "./FlowChange";
 import { FlowHeadData, FlowHeadDataType } from "./FlowHeadData";
 import { ServerLogger } from "../ServerLogger";
-import { getJsonData } from "./json-blob";
 import { ABORT_SYMBOL } from "./retry";
-import { updateBlob } from "./update-blob";
+import { update } from "./update";
 import { FlowContent, DefaultFlowTheme, FlowPresence, ResetContent } from "scribing";
 
 /** @internal */
-export const readHeadBlob = async (blobStore: BlobStore, initialContent: FlowContent): Promise<FlowHeadData> => {
-    const readResult = await blobStore.read(HEAD_BLOB_KEY);
+export const readHead = async (store: JsonStore, initialContent: FlowContent): Promise<FlowHeadData> => {
+    const readResult = await store.read(HEAD_KEY);
     if (readResult === null) {
         return getInitialHeadData(initialContent);
     } else {
-        return await getJsonData(readResult, FlowHeadDataType);
+        return FlowHeadDataType.fromJsonValue(readResult.value);
     }
 };
 
 /** @internal */
-export const updateHeadBlob = async (
+export const updateHead = async (
     logger: ServerLogger,
-    blobStore: BlobStore,
+    store: JsonStore,
     initialContent: FlowContent,
     callback: (dataBefore: FlowHeadData) => Promise<FlowHeadData | typeof ABORT_SYMBOL>,
-): Promise<FlowHeadData | typeof ABORT_SYMBOL> => updateBlob(
+): Promise<FlowHeadData | typeof ABORT_SYMBOL> => update(
     logger,
-    blobStore,
-    HEAD_BLOB_KEY,
+    store,
+    HEAD_KEY,
     FlowHeadDataType,
     getInitialHeadData(initialContent),
     callback,
 );
 
-const HEAD_BLOB_KEY = "head";
+const HEAD_KEY = "head";
 
 const getInitialHeadData = (content: FlowContent): FlowHeadData => Object.freeze({
     version: 0,

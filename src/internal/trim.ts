@@ -1,4 +1,4 @@
-import { BlobStore } from "../BlobStore";
+import { JsonStore } from "../JsonStore";
 import { FlowChange } from "./FlowChange";
 import { ServerLogger } from "../ServerLogger";
 import { FlowHeadData } from "./FlowHeadData";
@@ -9,14 +9,14 @@ import { getAge, ONE_MINUTE } from "./time";
 /** @internal */
 export const getTrimmedHead = async (
     logger: ServerLogger,
-    blobStore: BlobStore,
+    store: JsonStore,
     dataBefore: FlowHeadData,
 ): Promise<FlowHeadData | typeof ABORT_SYMBOL> => {
     const { recent, ...rest } = dataBefore;
     const trimCount = getTrimCount(recent);
     const keepCount = recent.length - trimCount;
     const trimmedRecent = keepCount > 0 ? recent.slice(-keepCount) : [];
-    const success = await storeHistory(logger, blobStore, recent.slice(0, trimCount));
+    const success = await storeHistory(logger, store, recent.slice(0, trimCount));
     if (!success) {
         return ABORT_SYMBOL;
     }
