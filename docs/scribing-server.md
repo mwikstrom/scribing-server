@@ -11,7 +11,7 @@ Server for collaborative rich text editing
 |  Class | Description |
 |  --- | --- |
 |  [FlowSyncServer](./scribing-server.flowsyncserver.md) |  |
-|  [MemoryBlobStore](./scribing-server.memoryblobstore.md) |  |
+|  [MemoryJsonStore](./scribing-server.memoryjsonstore.md) |  |
 
 ## Functions
 
@@ -23,10 +23,10 @@ Server for collaborative rich text editing
 
 |  Interface | Description |
 |  --- | --- |
-|  [BlobConditions](./scribing-server.blobconditions.md) |  |
-|  [BlobReadResult](./scribing-server.blobreadresult.md) |  |
-|  [BlobStore](./scribing-server.blobstore.md) |  |
-|  [BlobWriteResult](./scribing-server.blobwriteresult.md) |  |
 |  [FlowSyncServerOptions](./scribing-server.flowsyncserveroptions.md) |  |
+|  [JsonReadResult](./scribing-server.jsonreadresult.md) |  |
+|  [JsonStore](./scribing-server.jsonstore.md) |  |
+|  [JsonWriteResult](./scribing-server.jsonwriteresult.md) |  |
 |  [ServerLogger](./scribing-server.serverlogger.md) |  |
+|  [WriteConditions](./scribing-server.writeconditions.md) |  |
 

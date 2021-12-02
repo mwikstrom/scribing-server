@@ -1,6 +1,6 @@
 const config = {
     preset: "ts-jest",
-    testEnvironment: "jsdom",
+    testEnvironment: "node",
     testRegex: "test/.*\\.spec\\.tsx?$",
     collectCoverage: true,
     coverageDirectory: "coverage",

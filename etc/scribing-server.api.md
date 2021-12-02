@@ -9,36 +9,7 @@ import { FlowSyncInput } from 'scribing';
 import { FlowSyncOutput } from 'scribing';
 import { FlowSyncProtocol } from 'scribing';
 import { FlowSyncSnapshot } from 'scribing';
-
-// @public (undocumented)
-export interface BlobConditions {
-    // (undocumented)
-    ifMatch?: string;
-    // (undocumented)
-    ifNoneMatch?: string;
-}
-
-// @public (undocumented)
-export interface BlobReadResult {
-    // (undocumented)
-    blob: Blob;
-    // (undocumented)
-    etag: string;
-}
-
-// @public (undocumented)
-export interface BlobStore {
-    // (undocumented)
-    read(key: string): Promise<BlobReadResult | null>;
-    // (undocumented)
-    write(key: string, blob: Blob, conditions?: BlobConditions): Promise<BlobWriteResult | null>;
-}
-
-// @public (undocumented)
-export interface BlobWriteResult {
-    // (undocumented)
-    etag: string;
-}
+import { JsonValue } from 'paratype';
 
 // @public (undocumented)
 export class FlowSyncServer implements FlowSyncProtocol {
@@ -54,19 +25,41 @@ export class FlowSyncServer implements FlowSyncProtocol {
 // @public (undocumented)
 export interface FlowSyncServerOptions {
     // (undocumented)
-    blobStore?: BlobStore;
-    // (undocumented)
     initialContent?: FlowContent;
     // (undocumented)
     logger?: ServerLogger;
+    // (undocumented)
+    store?: JsonStore;
 }
 
 // @public (undocumented)
-export class MemoryBlobStore implements BlobStore {
+export interface JsonReadResult {
     // (undocumented)
-    read(key: string): Promise<BlobReadResult | null>;
+    etag: string;
     // (undocumented)
-    write(key: string, blob: Blob, conditions?: BlobConditions): Promise<BlobWriteResult | null>;
+    value: JsonValue;
+}
+
+// @public (undocumented)
+export interface JsonStore {
+    // (undocumented)
+    read(key: string): Promise<JsonReadResult | null>;
+    // (undocumented)
+    write(key: string, value: JsonValue, conditions?: WriteConditions): Promise<JsonWriteResult | null>;
+}
+
+// @public (undocumented)
+export interface JsonWriteResult {
+    // (undocumented)
+    etag: string;
+}
+
+// @public (undocumented)
+export class MemoryJsonStore implements JsonStore {
+    // (undocumented)
+    read(key: string): Promise<JsonReadResult | null>;
+    // (undocumented)
+    write(key: string, value: JsonValue, conditions?: WriteConditions): Promise<JsonWriteResult | null>;
 }
 
 // @public (undocumented)
@@ -80,6 +73,14 @@ export interface ServerLogger {
     log(message: string): void;
     // (undocumented)
     warn(message: string): void;
+}
+
+// @public (undocumented)
+export interface WriteConditions {
+    // (undocumented)
+    ifMatch?: string;
+    // (undocumented)
+    ifNoneMatch?: string;
 }
 
 ```
