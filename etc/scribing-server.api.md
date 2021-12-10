@@ -5,6 +5,7 @@
 ```ts
 
 import { FlowContent } from 'scribing';
+import { FlowContentHashFunc } from 'scribing';
 import { FlowSyncInput } from 'scribing';
 import { FlowSyncOutput } from 'scribing';
 import { FlowSyncProtocol } from 'scribing';
@@ -24,6 +25,8 @@ export class FlowSyncServer implements FlowSyncProtocol {
 
 // @public (undocumented)
 export interface FlowSyncServerOptions {
+    // (undocumented)
+    hashFunc?: FlowContentHashFunc;
     // (undocumented)
     initialContent?: FlowContent;
     // (undocumented)

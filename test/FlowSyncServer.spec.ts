@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { FlowOperation, FlowSyncInputType } from "scribing";
+import { FlowContentHashFunc, FlowOperation, FlowSyncInputType } from "scribing";
 import { FlowSyncServer, MemoryJsonStore } from "../src";
+import { createHash } from "crypto";
 
 jest.useFakeTimers();
+
+const hashFunc: FlowContentHashFunc = async data => createHash("sha384").update(data).digest();
 
 describe("FlowSyncServer", () => {
     it("can be constructed without parameters", () => {
@@ -12,7 +15,7 @@ describe("FlowSyncServer", () => {
 
     it("can sync and trim", async () => {
         const blobStore = new MemoryJsonStore();
-        const server = new FlowSyncServer({store: blobStore});
+        const server = new FlowSyncServer({store: blobStore, hashFunc });
 
         // Client A insert "foo" at position 0, based on version 0
         const v1 = await server.sync(FlowSyncInputType.fromJsonValue({

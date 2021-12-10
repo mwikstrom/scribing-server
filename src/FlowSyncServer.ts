@@ -3,6 +3,7 @@ import { FlowHeadData } from "./internal/FlowHeadData";
 import { ServerLogger } from "./ServerLogger";
 import { 
     FlowContent, 
+    FlowContentHashFunc, 
     FlowOperation, 
     FlowSyncInput, 
     FlowSyncOutput, 
@@ -23,6 +24,7 @@ export interface FlowSyncServerOptions {
     store?: JsonStore;
     logger?: ServerLogger;
     initialContent?: FlowContent;
+    hashFunc?: FlowContentHashFunc;
 }
 
 /** @public */
@@ -30,6 +32,7 @@ export class FlowSyncServer implements FlowSyncProtocol {
     readonly #store: JsonStore;
     readonly #logger: ServerLogger;
     readonly #initialContent: FlowContent;
+    readonly #hashFunc?: FlowContentHashFunc;
     #trimActive = false;
     #trimTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -38,16 +41,18 @@ export class FlowSyncServer implements FlowSyncProtocol {
             store = new MemoryJsonStore(),
             logger = console,
             initialContent = FlowContent.empty,
+            hashFunc,
         } = options;
         this.#store = store;
         this.#logger = logger;
         this.#initialContent = initialContent;
+        this.#hashFunc = hashFunc;
     }
 
     async read(): Promise<FlowSyncSnapshot> {   
         const data = await readHead(this.#store, this.#initialContent);
         const { version, content, theme, presence } = data;
-        const digest = await content.digest();
+        const digest = await content.digest(this.#hashFunc);
         return { version, content, digest, theme, presence }; 
     }
     
@@ -73,7 +78,7 @@ export class FlowSyncServer implements FlowSyncProtocol {
             return null;
         }
 
-        const digest = await dataAfter.content.digest();
+        const digest = await dataAfter.content.digest(this.#hashFunc);
         const output: FlowSyncOutput = {
             version: dataAfter.version,
             digest,
