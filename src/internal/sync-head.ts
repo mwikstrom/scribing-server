@@ -22,6 +22,10 @@ export const getSyncedHead = (
         return CONFLICT_SYMBOL;
     }
 
+    if (input.operation && dataBefore.frozen) {
+        return CONFLICT_SYMBOL;
+    }
+
     const operation = getOperationToApply(input.operation, merge);
     const version = operation === null ? dataBefore.version : dataBefore.version + 1;
     const recent = getSyncedRecent(dataBefore.recent, user, operation, version);
@@ -30,6 +34,7 @@ export const getSyncedHead = (
     const presence = getSyncedPresence(dataBefore.presence, input.client, user, selection, operation);
     const dataAfter: FlowHeadData = {
         version,
+        frozen: input.frozen ?? dataBefore.frozen,
         content,
         theme: dataBefore.theme,
         recent,

@@ -85,6 +85,7 @@ export class FlowSyncServer implements FlowSyncProtocol {
         const digest = await dataAfter.content.digest(this.#hashFunc);
         const output: FlowSyncOutput = {
             version: dataAfter.version,
+            frozen: dataAfter.frozen,
             digest,
             merge,
             presence: excludeMyPresence(dataAfter.presence, input.client, user),

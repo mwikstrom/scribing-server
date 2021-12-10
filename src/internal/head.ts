@@ -55,15 +55,16 @@ export const updateHead = (
 
 /** @internal */
 export const getSnapshot = async (data: FlowHeadData, hashFunc?: FlowContentHashFunc): Promise<FlowSyncSnapshot> => {
-    const { version, content, theme, presence } = data;
+    const { version, frozen, content, theme, presence } = data;
     const digest = await content.digest(hashFunc);
-    return { version, content, digest, theme, presence }; 
+    return { version, frozen, content, digest, theme, presence }; 
 };
 
 const HEAD_KEY = "head";
 
 const getInitialHeadData = (content: FlowContent, user: string): FlowHeadData => Object.freeze({
     version: 0,
+    frozen: false,
     content,
     theme: DefaultFlowTheme.instance,
     recent: Object.freeze([getInitialChange(content, user)]) as FlowChange[],
