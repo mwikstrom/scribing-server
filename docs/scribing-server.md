@@ -30,9 +30,3 @@ Server for collaborative rich text editing
 |  [ServerLogger](./scribing-server.serverlogger.md) |  |
 |  [WriteConditions](./scribing-server.writeconditions.md) |  |
 
-## Type Aliases
-
-|  Type Alias | Description |
-|  --- | --- |
-|  [InitialContentFactory](./scribing-server.initialcontentfactory.md) |  |
-

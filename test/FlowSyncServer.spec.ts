@@ -16,6 +16,7 @@ describe("FlowSyncServer", () => {
     it("can sync and trim", async () => {
         const blobStore = new MemoryJsonStore();
         const server = new FlowSyncServer({store: blobStore, hashFunc });
+        await server.init();
 
         // Client A insert "foo" at position 0, based on version 0
         const v1 = await server.sync(FlowSyncInputType.fromJsonValue({
@@ -92,7 +93,7 @@ describe("FlowSyncServer", () => {
         const changes = await blobStore.read("changes_0000000000000");
         expect(changes).not.toBeNull();
         expect(changes!.value).toMatchObject([
-            { v: 0, t: ts0, u: "A", o: { reset: "content", content: [{ break: "para"}] } },
+            { v: 0, t: ts0, u: "", o: { reset: "content", content: [{ break: "para"}] } },
             { v: 1, t: ts0, u: "A", o: { insert: ["foo"], at: 0} },
             { v: 2, t: ts0, u: "B", o: { insert: ["bar"], at: 3} },
         ]);

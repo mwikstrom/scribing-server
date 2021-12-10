@@ -16,6 +16,5 @@ export interface FlowSyncServerOptions
 |  Property | Type | Description |
 |  --- | --- | --- |
 |  [hashFunc?](./scribing-server.flowsyncserveroptions.hashfunc.md) | FlowContentHashFunc | <i>(Optional)</i> |
-|  [initialContent?](./scribing-server.flowsyncserveroptions.initialcontent.md) | [InitialContentFactory](./scribing-server.initialcontentfactory.md) | <i>(Optional)</i> |
 |  [store?](./scribing-server.flowsyncserveroptions.store.md) | [JsonStore](./scribing-server.jsonstore.md) | <i>(Optional)</i> |
 

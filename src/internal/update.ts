@@ -10,8 +10,8 @@ export const update = <T>(
     store: JsonStore,
     key: string,
     dataType: Type<T>,
-    initial: () => Promise<T | typeof CONFLICT_SYMBOL>,
     callback: (data: T, logger: ServerLogger) => Promise<T | typeof ABORT_SYMBOL>,
+    initial: T | typeof CONFLICT_SYMBOL = CONFLICT_SYMBOL,
 ): Promise<T | typeof ABORT_SYMBOL | typeof CONFLICT_SYMBOL> => {
     const prefixedLogger = prefixLogger(logger, `Update ${key}: `);
     return retry(
@@ -24,11 +24,11 @@ const attempt = async <T>(
     store: JsonStore,
     key: string,
     dataType: Type<T>,
-    initial: () => Promise<T | typeof CONFLICT_SYMBOL>,
+    initial: T | typeof CONFLICT_SYMBOL = CONFLICT_SYMBOL,
     callback: (data: T) => Promise<T | typeof ABORT_SYMBOL>,
 ): Promise<T | typeof RETRY_SYMBOL | typeof ABORT_SYMBOL | typeof CONFLICT_SYMBOL> => {
     const readResult = await store.read(key);
-    const dataBefore = readResult === null ? await initial() : dataType.fromJsonValue(readResult.value);
+    const dataBefore = readResult === null ? initial : dataType.fromJsonValue(readResult.value);
     if (typeof dataBefore === "symbol") {
         return dataBefore;
     }

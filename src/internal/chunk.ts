@@ -16,8 +16,8 @@ export const updateChunk = async (
     store,
     getChunkKey(chunkNumber),
     FlowChangeArrayType,
-    async () => INITIAL_CHUNK_DATA,
     callback,
+    INITIAL_CHUNK_DATA,
 );
 
 const getChunkKey = (chunkNumber: number) => `changes_${chunkNumber.toFixed(0).padStart(13, "0")}`;

@@ -16,11 +16,13 @@ import { JsonValue } from 'paratype';
 export class FlowSyncServer implements FlowSyncProtocol {
     constructor(options?: FlowSyncServerOptions);
     // (undocumented)
+    init(content?: FlowContent, user?: string): Promise<FlowSyncSnapshot | null>;
+    // (undocumented)
     read(): Promise<FlowSyncSnapshot | null>;
     // (undocumented)
     sync(input: FlowSyncInput, user?: string, logger?: ServerLogger): Promise<FlowSyncOutput | null>;
     // (undocumented)
-    trim(user?: string, logger?: ServerLogger): Promise<boolean>;
+    trim(logger?: ServerLogger): Promise<boolean>;
 }
 
 // @public (undocumented)
@@ -28,13 +30,8 @@ export interface FlowSyncServerOptions {
     // (undocumented)
     hashFunc?: FlowContentHashFunc;
     // (undocumented)
-    initialContent?: InitialContentFactory;
-    // (undocumented)
     store?: JsonStore;
 }
-
-// @public (undocumented)
-export type InitialContentFactory = (logger: ServerLogger) => Promise<FlowContent>;
 
 // @public (undocumented)
 export interface JsonReadResult {

@@ -4,9 +4,15 @@ import { FlowHeadData, FlowHeadDataType } from "./FlowHeadData";
 import { ServerLogger } from "../ServerLogger";
 import { ABORT_SYMBOL } from "./retry";
 import { update } from "./update";
-import { FlowContent, DefaultFlowTheme, FlowPresence, ResetContent } from "scribing";
+import { 
+    FlowContent, 
+    DefaultFlowTheme, 
+    FlowPresence, 
+    ResetContent, 
+    FlowSyncSnapshot, 
+    FlowContentHashFunc 
+} from "scribing";
 import { CONFLICT_SYMBOL } from "./merge";
-import type { InitialContentFactory } from "../FlowSyncServer";
 
 /** @internal */
 export const readHead = async (store: JsonStore): Promise<FlowHeadData | null> => {
@@ -19,20 +25,40 @@ export const readHead = async (store: JsonStore): Promise<FlowHeadData | null> =
 };
 
 /** @internal */
+export const initHead = async (
+    store: JsonStore,
+    content: FlowContent,
+    user: string,
+): Promise<FlowHeadData | null> => {
+    const head = getInitialHeadData(content, user);
+    const data = FlowHeadDataType.toJsonValue(head);
+    const result = await store.write(HEAD_KEY, data, { ifNoneMatch: "*" });
+    if (result === null) {
+        return null;
+    } else {
+        return head;
+    }
+};
+
+/** @internal */
 export const updateHead = (
     logger: ServerLogger,
     store: JsonStore,
-    initialContent: InitialContentFactory | null,
     callback: (dataBefore: FlowHeadData) => Promise<FlowHeadData | typeof ABORT_SYMBOL>,
-    user = "",
 ): Promise<FlowHeadData | typeof ABORT_SYMBOL | typeof CONFLICT_SYMBOL> => update(
     logger,
     store,
     HEAD_KEY,
     FlowHeadDataType,
-    async () => initialContent === null ? CONFLICT_SYMBOL : getInitialHeadData(await initialContent(logger), user),
     callback,
 );
+
+/** @internal */
+export const getSnapshot = async (data: FlowHeadData, hashFunc?: FlowContentHashFunc): Promise<FlowSyncSnapshot> => {
+    const { version, content, theme, presence } = data;
+    const digest = await content.digest(hashFunc);
+    return { version, content, digest, theme, presence }; 
+};
 
 const HEAD_KEY = "head";
 
