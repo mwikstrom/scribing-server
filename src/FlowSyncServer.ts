@@ -20,43 +20,49 @@ import { MemoryJsonStore } from "./MemoryJsonStore";
 import { excludeMyPresence } from "./internal/sync-presence";
 
 /** @public */
+export type InitialContentFactory = (logger: ServerLogger) => Promise<FlowContent>;
+
+/** @public */
 export interface FlowSyncServerOptions {
     store?: JsonStore;
-    logger?: ServerLogger;
-    initialContent?: FlowContent;
     hashFunc?: FlowContentHashFunc;
+    initialContent?: InitialContentFactory;
 }
 
 /** @public */
 export class FlowSyncServer implements FlowSyncProtocol {
     readonly #store: JsonStore;
-    readonly #logger: ServerLogger;
-    readonly #initialContent: FlowContent;
     readonly #hashFunc?: FlowContentHashFunc;
+    readonly #initialContent: InitialContentFactory;
     #trimActive = false;
     #trimTimer: ReturnType<typeof setTimeout> | null = null;
 
     constructor(options: FlowSyncServerOptions = {}) {
         const {
             store = new MemoryJsonStore(),
-            logger = console,
-            initialContent = FlowContent.empty,
             hashFunc,
+            initialContent = async () => FlowContent.emptyParagraph,
         } = options;
         this.#store = store;
-        this.#logger = logger;
-        this.#initialContent = initialContent;
         this.#hashFunc = hashFunc;
+        this.#initialContent = initialContent;
     }
 
-    async read(): Promise<FlowSyncSnapshot> {   
-        const data = await readHead(this.#store, this.#initialContent);
+    async read(): Promise<FlowSyncSnapshot | null> {   
+        const data = await readHead(this.#store);
+        if (data === null) {
+            return null;
+        }
         const { version, content, theme, presence } = data;
         const digest = await content.digest(this.#hashFunc);
         return { version, content, digest, theme, presence }; 
     }
     
-    async sync(input: FlowSyncInput, user = ""): Promise<FlowSyncOutput | null> {
+    async sync(
+        input: FlowSyncInput,
+        user = "",
+        logger: ServerLogger = console,
+    ): Promise<FlowSyncOutput | null> {
         let merge: FlowOperation | null = null;
         const attempt = async (dataBefore: FlowHeadData): Promise<FlowHeadData | typeof ABORT_SYMBOL> => {
             const result = getSyncedHead(input, user, dataBefore);
@@ -68,13 +74,14 @@ export class FlowSyncServer implements FlowSyncProtocol {
         };
 
         const dataAfter = await updateHead(
-            this.#logger,
+            logger,
             this.#store,
             this.#initialContent,
             attempt,
+            user,
         );
         
-        if (dataAfter === ABORT_SYMBOL) {
+        if (typeof dataAfter === "symbol") {
             return null;
         }
 
@@ -87,15 +94,15 @@ export class FlowSyncServer implements FlowSyncProtocol {
         };
 
         if (shouldTrim(dataAfter.recent) && this.#trimTimer === null && !this.#trimActive) {
-            this.#trimTimer = setTimeout(() => this.#trimInBackground(), TRIM_INTERVAL);
+            this.#trimTimer = setTimeout(() => this.#trimInBackground(user, logger), TRIM_INTERVAL);
         }
 
         return output;
     }
 
-    async trim(): Promise<boolean> {
+    async trim(user = "", logger: ServerLogger = console): Promise<boolean> {
         const attempt = async (dataBefore: FlowHeadData) => {
-            const dataAfter = await getTrimmedHead(this.#logger, this.#store, dataBefore);
+            const dataAfter = await getTrimmedHead(logger, this.#store, dataBefore);
             if (dataAfter !== ABORT_SYMBOL) {
                 success = dataAfter.recent.length !== dataBefore.recent.length;
             }
@@ -115,12 +122,13 @@ export class FlowSyncServer implements FlowSyncProtocol {
         try {
             this.#trimActive = true;
             const result = await updateHead(
-                this.#logger,
+                logger,
                 this.#store,
-                this.#initialContent,
+                null,
                 attempt,
+                user,
             );
-            if (result !== ABORT_SYMBOL) {
+            if (typeof result !== "symbol") {
                 success = true;
             }
         } finally {
@@ -129,11 +137,11 @@ export class FlowSyncServer implements FlowSyncProtocol {
         return success;
     }
 
-    async #trimInBackground(): Promise<void> {
+    async #trimInBackground(user: string, logger: ServerLogger): Promise<void> {
         try {
-            await this.trim();
+            await this.trim(user, logger);
         } catch (error) {
-            this.#logger.error(`Background trim failed: ${String(error)}`);
+            logger.error(`Background trim failed: ${String(error)}`);
         }
     }
 }

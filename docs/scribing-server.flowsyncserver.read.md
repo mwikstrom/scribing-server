@@ -7,9 +7,9 @@
 <b>Signature:</b>
 
 ```typescript
-read(): Promise<FlowSyncSnapshot>;
+read(): Promise<FlowSyncSnapshot | null>;
 ```
 <b>Returns:</b>
 
-Promise&lt;FlowSyncSnapshot&gt;
+Promise&lt;FlowSyncSnapshot \| null&gt;
 

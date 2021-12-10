@@ -82,7 +82,7 @@ describe("FlowSyncServer", () => {
         expect(head).not.toBeNull();
         expect(head!.value).toMatchObject({
             version: 4,
-            content: ["Hello foobar!"],
+            content: ["Hello foobar!", { break: "para"}],
             recent: [
                 { v: 3, t: ts1, u: "A", o: { insert: ["!"], at: 6} },
                 { v: 4, t: ts2, u: "C", o: { insert: ["Hello "], at: 0} },
@@ -92,7 +92,7 @@ describe("FlowSyncServer", () => {
         const changes = await blobStore.read("changes_0000000000000");
         expect(changes).not.toBeNull();
         expect(changes!.value).toMatchObject([
-            { v: 0, t: ts0, u: "", o: { reset: "content", content: [] } },
+            { v: 0, t: ts0, u: "A", o: { reset: "content", content: [{ break: "para"}] } },
             { v: 1, t: ts0, u: "A", o: { insert: ["foo"], at: 0} },
             { v: 2, t: ts0, u: "B", o: { insert: ["bar"], at: 3} },
         ]);

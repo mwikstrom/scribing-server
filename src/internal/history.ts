@@ -2,7 +2,6 @@ import { JsonStore } from "../JsonStore";
 import { FlowChange } from "./FlowChange";
 import { ServerLogger } from "../ServerLogger";
 import { updateChunk } from "./chunk";
-import { ABORT_SYMBOL } from "./retry";
 import { getMergedChanges } from "./merge";
 
 /** @internal */
@@ -40,7 +39,7 @@ const storeChunk = async (
         async dataBefore => getMergedChanges(dataBefore, toStore),
     );
 
-    if (result === ABORT_SYMBOL) {
+    if (typeof result === "symbol") {
         return null;
     }
 

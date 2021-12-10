@@ -7,5 +7,5 @@
 <b>Signature:</b>
 
 ```typescript
-initialContent?: FlowContent;
+initialContent?: InitialContentFactory;
 ```

@@ -3,6 +3,7 @@ import { FlowChange, FlowChangeArrayType } from "./FlowChange";
 import { ServerLogger } from "../ServerLogger";
 import { ABORT_SYMBOL } from "./retry";
 import { update } from "./update";
+import { CONFLICT_SYMBOL } from "./merge";
 
 /** @internal */
 export const updateChunk = async (
@@ -10,12 +11,12 @@ export const updateChunk = async (
     store: JsonStore,
     chunkNumber: number,
     callback: (dataBefore: FlowChange[], logger: ServerLogger) => Promise<FlowChange[] | typeof ABORT_SYMBOL>,
-): Promise<readonly FlowChange[] | typeof ABORT_SYMBOL> => update(
+): Promise<readonly FlowChange[] | typeof ABORT_SYMBOL | typeof CONFLICT_SYMBOL> => update(
     logger,
     store,
     getChunkKey(chunkNumber),
     FlowChangeArrayType,
-    INITIAL_CHUNK_DATA,
+    async () => INITIAL_CHUNK_DATA,
     callback,
 );
 

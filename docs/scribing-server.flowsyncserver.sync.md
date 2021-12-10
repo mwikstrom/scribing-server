@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-sync(input: FlowSyncInput, user?: string): Promise<FlowSyncOutput | null>;
+sync(input: FlowSyncInput, user?: string, logger?: ServerLogger): Promise<FlowSyncOutput | null>;
 ```
 
 ## Parameters
@@ -16,6 +16,7 @@ sync(input: FlowSyncInput, user?: string): Promise<FlowSyncOutput | null>;
 |  --- | --- | --- |
 |  input | FlowSyncInput |  |
 |  user | string |  |
+|  logger | [ServerLogger](./scribing-server.serverlogger.md) |  |
 
 <b>Returns:</b>
 

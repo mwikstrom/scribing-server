@@ -7,8 +7,16 @@
 <b>Signature:</b>
 
 ```typescript
-trim(): Promise<boolean>;
+trim(user?: string, logger?: ServerLogger): Promise<boolean>;
 ```
+
+## Parameters
+
+|  Parameter | Type | Description |
+|  --- | --- | --- |
+|  user | string |  |
+|  logger | [ServerLogger](./scribing-server.serverlogger.md) |  |
+
 <b>Returns:</b>
 
 Promise&lt;boolean&gt;
