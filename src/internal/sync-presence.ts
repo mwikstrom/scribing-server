@@ -17,6 +17,9 @@ export const getSyncedPresence = (
 };
 
 /** @internal */
+export const getFreshPresence = (before: readonly FlowPresence[]): FlowPresence[] => before.filter(isFresh);
+
+/** @internal */
 export const excludeMyPresence = (
     array: readonly FlowPresence[],
     client: string,

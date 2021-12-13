@@ -5,6 +5,7 @@ import { FlowHeadData } from "./FlowHeadData";
 import { storeHistory } from "./history";
 import { ABORT_SYMBOL } from "./retry";
 import { getAge, ONE_MINUTE } from "./time";
+import { getFreshPresence } from "./sync-presence";
 
 /** @internal */
 export const getTrimmedHead = async (
@@ -12,7 +13,7 @@ export const getTrimmedHead = async (
     store: JsonStore,
     dataBefore: FlowHeadData,
 ): Promise<FlowHeadData | typeof ABORT_SYMBOL> => {
-    const { recent, ...rest } = dataBefore;
+    const { recent, presence, ...rest } = dataBefore;
     const trimCount = getTrimCount(recent);
     const keepCount = recent.length - trimCount;
     const trimmedRecent = keepCount > 0 ? recent.slice(-keepCount) : [];
@@ -20,7 +21,8 @@ export const getTrimmedHead = async (
     if (!success) {
         return ABORT_SYMBOL;
     }
-    const dataAfter: FlowHeadData= { ...rest, recent: trimmedRecent };
+    const fresh = getFreshPresence(presence);
+    const dataAfter: FlowHeadData= { ...rest, presence: fresh, recent: trimmedRecent };
     return dataAfter;
 };
 

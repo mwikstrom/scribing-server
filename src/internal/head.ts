@@ -13,6 +13,7 @@ import {
     FlowTheme
 } from "scribing";
 import { CONFLICT_SYMBOL } from "./merge";
+import { getFreshPresence } from "./sync-presence";
 
 /** @internal */
 export const readHead = async (store: JsonStore): Promise<FlowHeadData | null> => {
@@ -58,7 +59,8 @@ export const updateHead = (
 export const getSnapshot = async (data: FlowHeadData, hashFunc?: FlowContentHashFunc): Promise<FlowSyncSnapshot> => {
     const { version, frozen, content, theme, presence } = data;
     const digest = await content.digest(hashFunc);
-    return { version, frozen, content, digest, theme, presence }; 
+    const fresh = getFreshPresence(presence);
+    return { version, frozen, content, digest, theme, presence: fresh }; 
 };
 
 const HEAD_KEY = "head";
