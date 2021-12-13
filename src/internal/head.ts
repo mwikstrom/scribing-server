@@ -6,11 +6,11 @@ import { ABORT_SYMBOL } from "./retry";
 import { update } from "./update";
 import { 
     FlowContent, 
-    DefaultFlowTheme, 
     FlowPresence, 
     ResetContent, 
     FlowSyncSnapshot, 
-    FlowContentHashFunc 
+    FlowContentHashFunc, 
+    FlowTheme
 } from "scribing";
 import { CONFLICT_SYMBOL } from "./merge";
 
@@ -28,9 +28,10 @@ export const readHead = async (store: JsonStore): Promise<FlowHeadData | null> =
 export const initHead = async (
     store: JsonStore,
     content: FlowContent,
+    theme: FlowTheme,
     user: string,
 ): Promise<FlowHeadData | null> => {
-    const head = getInitialHeadData(content, user);
+    const head = getInitialHeadData(content, theme, user);
     const data = FlowHeadDataType.toJsonValue(head);
     const result = await store.write(HEAD_KEY, data, { ifNoneMatch: "*" });
     if (result === null) {
@@ -62,11 +63,11 @@ export const getSnapshot = async (data: FlowHeadData, hashFunc?: FlowContentHash
 
 const HEAD_KEY = "head";
 
-const getInitialHeadData = (content: FlowContent, user: string): FlowHeadData => Object.freeze({
+const getInitialHeadData = (content: FlowContent, theme: FlowTheme, user: string): FlowHeadData => Object.freeze({
     version: 0,
     frozen: false,
     content,
-    theme: DefaultFlowTheme.instance,
+    theme,
     recent: Object.freeze([getInitialChange(content, user)]) as FlowChange[],
     presence: Object.freeze(new Array<FlowPresence>(0)) as FlowPresence[],
 });

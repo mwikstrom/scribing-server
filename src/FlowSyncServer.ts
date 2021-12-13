@@ -2,6 +2,7 @@ import { JsonStore } from "./JsonStore";
 import { FlowHeadData } from "./internal/FlowHeadData";
 import { ServerLogger } from "./ServerLogger";
 import { 
+    DefaultFlowTheme,
     FlowContent, 
     FlowContentHashFunc, 
     FlowOperation, 
@@ -43,9 +44,10 @@ export class FlowSyncServer implements FlowSyncProtocol {
 
     async init(
         content = FlowContent.emptyParagraph,
+        theme = DefaultFlowTheme.instance,
         user = "",
     ): Promise<FlowSyncSnapshot | null> {
-        const data = await initHead(this.#store, content, user);
+        const data = await initHead(this.#store, content, theme, user);
         if (data === null) {
             return null;
         } else {

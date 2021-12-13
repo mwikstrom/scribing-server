@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-init(content?: FlowContent, user?: string): Promise<FlowSyncSnapshot | null>;
+init(content?: FlowContent, theme?: DefaultFlowTheme, user?: string): Promise<FlowSyncSnapshot | null>;
 ```
 
 ## Parameters
@@ -15,6 +15,7 @@ init(content?: FlowContent, user?: string): Promise<FlowSyncSnapshot | null>;
 |  Parameter | Type | Description |
 |  --- | --- | --- |
 |  content | FlowContent |  |
+|  theme | DefaultFlowTheme |  |
 |  user | string |  |
 
 <b>Returns:</b>
