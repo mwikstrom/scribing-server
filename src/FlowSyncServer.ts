@@ -44,9 +44,10 @@ export class FlowSyncServer implements FlowSyncProtocol {
 
     async init(
         content = FlowContent.emptyParagraph,
-        theme = DefaultFlowTheme.instance,
+        language?: string,
         user = "",
     ): Promise<FlowSyncSnapshot | null> {
+        const theme = DefaultFlowTheme.get(language);
         const data = await initHead(this.#store, content, theme, user);
         if (data === null) {
             return null;

@@ -4,7 +4,6 @@
 
 ```ts
 
-import { DefaultFlowTheme } from 'scribing';
 import { FlowContent } from 'scribing';
 import { FlowContentHashFunc } from 'scribing';
 import { FlowSyncInput } from 'scribing';
@@ -17,7 +16,7 @@ import { JsonValue } from 'paratype';
 export class FlowSyncServer implements FlowSyncProtocol {
     constructor(options?: FlowSyncServerOptions);
     // (undocumented)
-    init(content?: FlowContent, theme?: DefaultFlowTheme, user?: string): Promise<FlowSyncSnapshot | null>;
+    init(content?: FlowContent, language?: string, user?: string): Promise<FlowSyncSnapshot | null>;
     // (undocumented)
     read(): Promise<FlowSyncSnapshot | null>;
     // (undocumented)
