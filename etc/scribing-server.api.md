@@ -16,6 +16,8 @@ import { JsonValue } from 'paratype';
 export class FlowSyncServer implements FlowSyncProtocol {
     constructor(options?: FlowSyncServerOptions);
     // (undocumented)
+    freeze(logger?: ServerLogger): Promise<boolean>;
+    // (undocumented)
     init(content?: FlowContent, language?: string, user?: string): Promise<FlowSyncSnapshot | null>;
     // (undocumented)
     read(): Promise<FlowSyncSnapshot | null>;

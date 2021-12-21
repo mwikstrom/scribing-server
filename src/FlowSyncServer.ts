@@ -56,6 +56,23 @@ export class FlowSyncServer implements FlowSyncProtocol {
         }
     }
 
+    async freeze(logger: ServerLogger = console): Promise<boolean> {
+        const attempt = async (dataBefore: FlowHeadData): Promise<FlowHeadData | typeof ABORT_SYMBOL> => {
+            if (dataBefore.frozen) {
+                return ABORT_SYMBOL;
+            } else {
+                return { ...dataBefore, frozen: true };
+            }
+        };
+
+        const dataAfter = await updateHead(logger, this.#store, attempt);
+        if (typeof dataAfter === "symbol") {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     async read(): Promise<FlowSyncSnapshot | null> {   
         const data = await readHead(this.#store);
         if (data === null) {

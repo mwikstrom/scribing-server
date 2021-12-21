@@ -22,6 +22,7 @@ export declare class FlowSyncServer implements FlowSyncProtocol
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
+|  [freeze(logger)](./scribing-server.flowsyncserver.freeze.md) |  |  |
 |  [init(content, language, user)](./scribing-server.flowsyncserver.init.md) |  |  |
 |  [read()](./scribing-server.flowsyncserver.read.md) |  |  |
 |  [sync(input, user, logger)](./scribing-server.flowsyncserver.sync.md) |  |  |
