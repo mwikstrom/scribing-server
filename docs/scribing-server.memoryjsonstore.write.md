@@ -16,7 +16,7 @@ write(key: string, value: JsonValue, conditions?: WriteConditions): Promise<Json
 |  --- | --- | --- |
 |  key | string |  |
 |  value | JsonValue |  |
-|  conditions | [WriteConditions](./scribing-server.writeconditions.md) |  |
+|  conditions | [WriteConditions](./scribing-server.writeconditions.md) | <i>(Optional)</i> |
 
 <b>Returns:</b>
 

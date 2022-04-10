@@ -16,5 +16,5 @@ constructor(options?: FlowSyncServerOptions);
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  options | [FlowSyncServerOptions](./scribing-server.flowsyncserveroptions.md) |  |
+|  options | [FlowSyncServerOptions](./scribing-server.flowsyncserveroptions.md) | <i>(Optional)</i> |
 

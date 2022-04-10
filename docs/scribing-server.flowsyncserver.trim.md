@@ -14,7 +14,7 @@ trim(logger?: ServerLogger): Promise<boolean>;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  logger | [ServerLogger](./scribing-server.serverlogger.md) |  |
+|  logger | [ServerLogger](./scribing-server.serverlogger.md) | <i>(Optional)</i> |
 
 <b>Returns:</b>
 

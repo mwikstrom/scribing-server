@@ -14,9 +14,9 @@ init(content?: FlowContent, language?: string, user?: string): Promise<FlowSyncS
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  content | FlowContent |  |
-|  language | string |  |
-|  user | string |  |
+|  content | FlowContent | <i>(Optional)</i> |
+|  language | string | <i>(Optional)</i> |
+|  user | string | <i>(Optional)</i> |
 
 <b>Returns:</b>
 

@@ -15,8 +15,8 @@ sync(input: FlowSyncInput, user?: string, logger?: ServerLogger): Promise<FlowSy
 |  Parameter | Type | Description |
 |  --- | --- | --- |
 |  input | FlowSyncInput |  |
-|  user | string |  |
-|  logger | [ServerLogger](./scribing-server.serverlogger.md) |  |
+|  user | string | <i>(Optional)</i> |
+|  logger | [ServerLogger](./scribing-server.serverlogger.md) | <i>(Optional)</i> |
 
 <b>Returns:</b>
 
