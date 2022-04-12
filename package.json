@@ -32,11 +32,11 @@
     "@babel/core": "^7.17.9",
     "@babel/preset-env": "^7.16.11",
     "@formatjs/icu-messageformat-parser": "^2.0.19",
-    "@microsoft/api-documenter": "^7.17.5",
-    "@microsoft/api-extractor": "^7.21.2",
+    "@microsoft/api-documenter": "^7.17.6",
+    "@microsoft/api-extractor": "^7.21.3",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-commonjs": "^20.0.0",
-    "@rollup/plugin-node-resolve": "^13.1.3",
+    "@rollup/plugin-node-resolve": "^13.2.0",
     "@rollup/plugin-typescript": "^8.3.1",
     "@types/jest": "^26.0.24",
     "@typescript-eslint/eslint-plugin": "^4.28.5",
@@ -46,7 +46,7 @@
     "paratype": "^1.0.0-preview.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.70.1",
-    "scribing": "^1.0.0-preview.1",
+    "scribing": "^1.0.0-preview.2",
     "ts-jest": "^27.1.4",
     "ts-node": "^10.7.0",
     "tslib": "^2.3.0",
@@ -55,6 +55,6 @@
   },
   "peerDependencies": {
     "paratype": "^1.0.0-preview.1",
-    "scribing": "^1.0.0-preview.1"
+    "scribing": "^1.0.0-preview.2"
   }
 }
