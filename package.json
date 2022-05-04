@@ -1,6 +1,6 @@
 {
   "name": "scribing-server",
-  "version": "1.0.0-preview.2",
+  "version": "1.0.0",
   "description": "Server for collaborative rich text editing",
   "main": "./dist/scribing-server.js",
   "typings": "./dist/scribing-server.d.ts",
